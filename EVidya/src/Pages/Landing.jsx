@@ -10,7 +10,7 @@ const Landing = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center">
-      <h1 className="text-4xl font-bold mb-4">Welcome to CampusVerse 🚀</h1>
+      <h1 className="text-4xl font-bold mb-4">EVidya</h1>
       <p className="text-lg text-gray-600 mb-6">
         Your all-in-one platform for students and campus life.
       </p>
