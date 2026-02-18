@@ -1,0 +1,142 @@
+/* Global resets — keep outside, but minimal */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: #f5f6fa;
+  color: #1e1e2f; /* This is your default global text color */
+}
+
+/* ===== Admin Dashboard Scoped Styles ===== */
+.adm-dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.adm-dashboard .adm-sidebar {
+  width: 250px;
+  background: #2d2f5b;
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-dashboard .adm-sidebar-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.adm-dashboard .adm-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.adm-dashboard .adm-nav-item {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+  font-size: 0.95rem;
+  color: inherit; /* inherit white from sidebar */
+}
+
+.adm-dashboard .adm-nav-item:hover {
+  background: #41427a;
+}
+
+/* Main Content */
+.adm-dashboard .adm-content {
+  flex: 1;
+  padding: 2rem;
+  background: #f5f6fa; /* or whatever you want */
+  color: #1e1e2f; /* dark text color inside content */
+}
+
+/* Header */
+.adm-dashboard .adm-header {
+  background: linear-gradient(135deg, #7b61ff, #2d2f5b);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.adm-dashboard .adm-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.adm-dashboard .adm-header p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Cards Section */
+.adm-dashboard .adm-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.adm-dashboard .adm-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+  color: #1e1e2f; /* force dark text inside card */
+}
+
+.adm-dashboard .adm-card:hover {
+  transform: translateY(-4px);
+}
+
+.adm-dashboard .adm-card h3 {
+  color: #1e1e2f;
+}
+
+.adm-dashboard .adm-number {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: #7b61ff;
+}
+
+/* Recent Activity */
+.adm-dashboard .adm-recent {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  color: #1e1e2f; /* dark text for recent activity */
+}
+
+.adm-dashboard .adm-recent h2 {
+  margin-top: 0;
+  color: #2d2f5b;
+}
+
+.adm-dashboard .adm-recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+
+.adm-dashboard .adm-recent-item {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  color: #1e1e2f; /* enforce dark text */
+}
+
+.adm-dashboard .adm-recent-item:last-child {
+  border-bottom: none;
+}

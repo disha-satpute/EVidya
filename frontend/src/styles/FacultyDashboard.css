@@ -1,0 +1,214 @@
+faculty.css /* 🌐 Global Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background: #f5f6fa;
+    color: #1e1e2f;
+  }
+  
+  /* ===== Navbar ===== */
+  .faculty-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2d2f5b;
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .faculty-brand {
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+  
+  .faculty-role {
+    font-size: 0.9rem;
+    margin-left: 8px;
+    color: #d1d1ff;
+  }
+  
+  .faculty-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .faculty-btn {
+    background: #444672;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .faculty-btn:hover {
+    background: #5759a8;
+    transform: translateY(-2px);
+  }
+  
+  .faculty-btn.faculty-purple {
+    background: #7b61ff;
+  }
+  
+  .faculty-btn.faculty-green {
+    background: #27ae60;
+  }
+  
+  .faculty-btn.faculty-red {
+    background: #e74c3c;
+  }
+  
+  .faculty-profile-circle {
+    width: 40px;
+    height: 40px;
+    background: #7b61ff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+  }
+  
+  /* ===== Welcome Section ===== */
+  .faculty-welcome {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #7b61ff, #2d2f5b);
+    color: white;
+    border-radius: 0 0 16px 16px;
+  }
+  
+  .faculty-welcome h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .faculty-welcome p {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* ===== Stats Cards ===== */
+  .faculty-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+  
+  .faculty-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+  }
+  
+  .faculty-stat-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .faculty-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+  
+  .faculty-number.faculty-yellow { color: #f1c40f; }
+  .faculty-number.faculty-green { color: #27ae60; }
+  .faculty-number.faculty-purple { color: #7b61ff; }
+  
+  .faculty-meta {
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  /* ===== Tabs ===== */
+  .faculty-tabs {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+    gap: 1rem;
+  }
+  
+  .faculty-tab {
+    background: #e0e0f5;
+    padding: 0.7rem 1.5rem;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.2s;
+  }
+  
+  .faculty-tab:hover {
+    background: #c7c7f0;
+  }
+  
+  .faculty-tab.faculty-active {
+    background: #7b61ff;
+    color: white;
+    font-weight: 600;
+  }
+  
+  /* ===== Reviews Table ===== */
+  .faculty-reviews-card {
+    background: white;
+    margin: 2rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  
+  .faculty-reviews-card h2 {
+    margin-bottom: 0.5rem;
+    color: #2d2f5b;
+  }
+  
+  .faculty-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .faculty-table th, 
+  .faculty-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+  
+  .faculty-table th {
+    background: #f0f0fa;
+    font-weight: 600;
+    color: #2d2f5b;
+  }
+  
+  .faculty-tag {
+    background: #7b61ff;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+  }
+  
+  .faculty-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .faculty-btn.faculty-small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+  }

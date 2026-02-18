@@ -1,0 +1,107 @@
+agentpage.css .agent-page-wrapper {
+    padding: 16px;
+    font-family: "Arial", sans-serif;
+    background-color: #94c6f5;
+    min-height: 100vh;
+  }
+  
+  .agent-page-wrapper h2 {
+    margin-bottom: 16px;
+  }
+  
+  /* Add Agent Form */
+  .agent-page-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .agent-page-form input,
+  .agent-page-form select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #080808;
+    flex: 1;
+  }
+  
+  .agent-page-form button {
+    background-color: #007bff;
+    color: rgb(20, 20, 20);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .agent-page-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Agents List */
+  .agent-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .agent-page-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #27012b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .agent-page-card h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .agent-page-role {
+    color: #888888;
+    font-size: 12px;
+  }
+  
+  .agent-page-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .agent-page-status.active {
+    background-color: #e0f7e0;
+    color: green;
+  }
+  
+  .agent-page-status.inactive {
+    background-color: #fff4e0;
+    color: orange;
+  }
+  
+  .agent-page-delete-btn {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  
+  .agent-page-delete-btn:hover {
+    background-color: #cc3b3f;
+  }
+  
+  .agent-page-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }

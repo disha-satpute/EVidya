@@ -1,0 +1,387 @@
+/* === Global Styles === */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #0f172a; /* Deep dark blue */
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+  font-weight: 400;
+}
+
+/* === Sidebar Toggle Button === */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  background-color: #1e293b;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  background-color: #334155;
+  transform: scale(1.05);
+}
+
+/* === Sidebar === */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 240px;
+  height: 100vh;
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding-top: 80px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1050;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.sidebar-item:hover {
+  background-color: #334155;
+}
+
+.sidebar-item.active {
+  background-color: #475569;
+  font-weight: 600;
+}
+
+/* === Main Content === */
+.dashboard-content {
+  margin-left: 0;
+  padding: 100px 30px 40px 30px;
+  transition: margin-left 0.3s ease;
+  background-color: #0f172a;
+  min-height: 100vh;
+}
+
+.dashboard-content.open {
+  margin-left: 240px;
+}
+
+.student-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* === Header Section === */
+.header-card {
+  background: #1e293b;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  color: #f8fafc;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.platform-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #1d4ed8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* === Welcome Card === */
+.welcome-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #334155;
+  border-radius: 10px;
+  padding: 20px 25px;
+}
+
+.welcome-card h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.welcome-card p {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.cgpa-box {
+  background: #1e293b;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cgpa {
+  font-size: 32px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.cgpa-box span {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* === Stats Grid === */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: linear-gradient(to bottom right, #2563eb, #1e3a8a);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card .icon {
+  font-size: 26px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.stat-card .value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat-card .label {
+  font-size: 14px;
+  color: #e0f2fe;
+}
+
+/* === Activities Section === */
+.activities-section {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+  margin-top: 30px;
+  color: #f8fafc; /* Ensure text visibility */
+}
+
+.activities-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #f1f5f9;
+}
+
+/* === Activity Card === */
+/* Recent Activities card with white background */
+.activity-card {
+  background: #fff; /* keep white background */
+  color: #1e293b;   /* dark blue text for visibility */
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border-left: 5px solid #0284c7;
+  position: relative;
+  padding-right: 140px; /* increased space for status badge */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow */
+  overflow: hidden;
+}
+
+.activity-card h4 {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #1e293b; /* dark heading text */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-card .time {
+  font-size: 13px;
+  color: #475569; /* medium-dark gray for time */
+}
+
+/* Status badges styling */
+.activity-card .status {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: default;
+  z-index: 10; /* ensure badge is on top */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  user-select: none;
+}
+
+.status.approved {
+  background-color: #dcfce7; /* soft green background */
+  color: #166534; /* dark green text */
+}
+
+.status.pending {
+  background-color: #fde68a; /* soft yellow background */
+  color: #92400e; /* dark yellow text */
+}
+
+/* === Certificate Form === */
+.cert-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cert-form input,
+.cert-form select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  font-size: 14px;
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+.cert-form button {
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cert-form button:hover {
+  background-color: #1d4ed8;
+}
+
+/* === Certificate Table === */
+.cert-table {
+  overflow-x: auto;
+}
+
+.cert-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.cert-table th,
+.cert-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #334155;
+  color: #e2e8f0;
+}
+
+.cert-table th {
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.cert-table td {
+  font-size: 14px;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .dashboard-content.open {
+    margin-left: 0;
+  }
+
+  .welcome-card {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .header-top {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .activity-card {
+    padding-right: 20px; /* remove extra padding on small screens */
+  }
+
+  .activity-card h4 {
+    /* no extra padding */
+  }
+
+  .activity-card .status {
+    position: static;
+    margin-top: 10px;
+    display: inline-block;
+    transform: none;
+    z-index: auto;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
