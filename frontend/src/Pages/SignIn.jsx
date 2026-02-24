@@ -1,33 +1,63 @@
 import React, { useState } from "react";
 import "../styles/SignIn.css";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const ROLES = ["Student", "Faculty", "Admin"];
+const ROLES = ["Student", "Faculty"];
 
 const EMAIL_PLACEHOLDER = {
   Student: "your.email@gmail.com",
   Faculty: "your.email@gmail.com",
-  Admin: "admin@institution.edu",
 };
 
 export default function SignIn() {
   const [role, setRole] = useState("Student");
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const onChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if (role === "Student") navigate("/student-dashboard");
-    else if (role === "Faculty") navigate("/faculty-dashboard");
-    else if (role === "Admin") navigate("/admin-dashboard");
+
+    setError("");
+    setLoading(true);
+
+    try {
+      let url = "";
+
+      if (role === "Student") {
+        url = "http://localhost:5000/api/students/login";
+      } else if (role === "Faculty") {
+        url = "http://localhost:5000/api/faculty/login";
+      }
+
+      const response = await axios.post(url, form);
+
+      // Save token & user
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("role", role);
+
+      // Redirect based on role
+      if (role === "Student") navigate("/student-dashboard");
+      if (role === "Faculty") navigate("/faculty-dashboard");
+
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Invalid email or password"
+      );
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="signin-shell split-layout">
-      {/* LEFT PANEL */}
       <div className="left-panel">
         <div className="brand-wrap">
           <Link className="back-link" to="/">← Back to Home</Link>
@@ -82,8 +112,10 @@ export default function SignIn() {
               <label>Password</label>
             </div>
 
-            <button className="submit-btn" type="submit">
-              Sign in as {role}
+            {error && <p className="error-text">{error}</p>}
+
+            <button className="submit-btn" type="submit" disabled={loading}>
+              {loading ? "Signing in..." : `Sign in as ${role}`}
             </button>
           </form>
 
@@ -93,7 +125,7 @@ export default function SignIn() {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
+      {/* Right Panel unchanged */}
       <div className="right-panel">
         <h2>Why Choose Smart Student Hub?</h2>
         <p>Your all-in-one academic ecosystem</p>

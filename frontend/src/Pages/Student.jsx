@@ -44,7 +44,7 @@ export default function Student() {
 
       alert("Student Registered Successfully 🎉");
 
-      navigate("/faculty-dashboard");
+      navigate("/student-dashboard");
 
     } catch (err) {
       setError(
