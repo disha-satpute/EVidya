@@ -4,6 +4,54 @@ import "../styles/Faculty.css";
 import facultyGif from "../assets/faculty-illustration.gif";
 
 const FacultyProfile = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/students/register",
+        formData
+      );
+
+      // Save token & user
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("role", "Student");
+
+      alert("Student Registered Successfully 🎉");
+
+      navigate("/student-dashboard");
+
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Registration failed"
+      );
+    }
+
+    setLoading(false);
+  };
   return (
     <div className="faculty-page">
       {/* Background glow */}

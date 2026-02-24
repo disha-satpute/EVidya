@@ -17,9 +17,12 @@ exports.registerStudent = async (req, res) => {
       [email]
     );
 
-    if (existingUser.rows.length > 0)
-      return res.status(400).json({ message: "Email already exists" });
-
+   
+if (existingUser.rows.length > 0) {
+  return res.status(400).json({
+    message: "User already registered. Please login."
+  });
+}
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
