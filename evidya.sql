@@ -61,3 +61,23 @@ VALUES ('test', 'test@gmail.com', 'hashedpassword');
 INSERT INTO faculty (full_name, college, email, password_hash)
 VALUES ('test', 'MIT','test@gmail.com', 'hashedpassword');
 
+--certificate table 
+CREATE TABLE certificates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+
+    certificate_name VARCHAR(200) NOT NULL,
+
+    organization VARCHAR(200) NOT NULL,
+
+    issue_date DATE NOT NULL,
+
+    description TEXT,
+
+    file_path TEXT,
+
+    status VARCHAR(20) DEFAULT 'Pending',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

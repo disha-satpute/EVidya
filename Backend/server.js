@@ -5,14 +5,20 @@ require("dotenv").config();
 const pool = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
+
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
+app.use("/api/certificates", certificateRoutes);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({

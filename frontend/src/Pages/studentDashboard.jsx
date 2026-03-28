@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect,useRef } from "react";
+import axios from "axios";
 import { Home, Calendar, User, Folder, Flame, Award } from "lucide-react";
 import "../styles/StudentDashboard.css";
 import ActivitiesPage from "./ActivityPage";
@@ -94,18 +95,96 @@ function SidebarItem({ icon, label, active, onClick }) {
 }
 
 // Certificates Page
+// Certificates Page
 function CertificatesPage() {
-  const [certificates, setCertificates] = useState([
-    { id: 1, name: "AWS Cloud Practitioner", issuer: "Amazon", date: "2023-08-20", status: "Approved" },
-    { id: 2, name: "Azure Fundamentals", issuer: "Microsoft", date: "2023-09-12", status: "Pending" },
-  ]);
+const fileInputRef = useRef(null);
+  const [certificates, setCertificates] = useState([]);
 
-  const [newCert, setNewCert] = useState({ name: "", issuer: "", date: "", status: "Pending" });
+  const [newCert, setNewCert] = useState({
+    name: "",
+    organization: "",
+    date: "",
+    description: "",
+    file: null,
+    status: "Pending"
+  });
 
-  const handleAdd = () => {
-    if (!newCert.name || !newCert.issuer || !newCert.date) return;
-    setCertificates([...certificates, { ...newCert, id: Date.now() }]);
-    setNewCert({ name: "", issuer: "", date: "", status: "Pending" });
+  // Fetch certificates from backend
+  const fetchCertificates = async () => {
+    try {
+
+      const res = await axios.get(
+        "http://localhost:5000/api/certificates/student",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      setCertificates(res.data);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Run when page loads
+  useEffect(() => {
+    fetchCertificates();
+  }, []);
+
+  const handleAdd = async () => {
+
+    if (!newCert.name || !newCert.organization || !newCert.date) {
+      alert("Please fill required fields");
+      return;
+    }
+
+    try {
+
+      const formData = new FormData();
+
+      formData.append("certificate_name", newCert.name);
+      formData.append("organization", newCert.organization);
+      formData.append("issue_date", newCert.date);
+      formData.append("description", newCert.description);
+
+      if (newCert.file) {
+        formData.append("certificate", newCert.file);
+      }
+
+      const res = await axios.post(
+        "http://localhost:5000/api/certificates/add",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      // update table
+      setCertificates([...certificates, res.data]);
+
+      // reset form
+      setNewCert({
+        name: "",
+        organization: "",
+        date: "",
+        description: "",
+        file: null,
+        status: "Pending"
+      });
+
+      if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+}
+    } catch (err) {
+      console.error(err);
+      alert("Certificate upload failed");
+    }
   };
 
   return (
@@ -113,40 +192,106 @@ function CertificatesPage() {
       <h2>Certificates</h2>
 
       <div className="cert-form">
-        <input type="text" placeholder="Certificate Name" value={newCert.name} onChange={(e) => setNewCert({ ...newCert, name: e.target.value })} />
-        <input type="text" placeholder="Issuer" value={newCert.issuer} onChange={(e) => setNewCert({ ...newCert, issuer: e.target.value })} />
-        <input type="date" value={newCert.date} onChange={(e) => setNewCert({ ...newCert, date: e.target.value })} />
-        <select value={newCert.status} onChange={(e) => setNewCert({ ...newCert, status: e.target.value })}>
-          <option value="Approved">Approved</option>
-          <option value="Pending">Pending</option>
-        </select>
-        <button onClick={handleAdd}>+ Add</button>
+
+        <input
+          type="text"
+          placeholder="Certificate Name"
+          value={newCert.name}
+          onChange={(e)=>setNewCert({...newCert,name:e.target.value})}
+        />
+
+        <input
+          type="text"
+          placeholder="Issuing Organization"
+          value={newCert.organization}
+          onChange={(e)=>setNewCert({...newCert,organization:e.target.value})}
+        />
+
+        <input
+          type="date"
+          value={newCert.date}
+          onChange={(e)=>setNewCert({...newCert,date:e.target.value})}
+        />
+
+        <input
+           type="file"
+           ref={fileInputRef}
+          onChange={(e)=>setNewCert({...newCert,file:e.target.files[0]})}
+        />
+
+        <input
+          type="text"
+          placeholder="Description"
+          value={newCert.description}
+          onChange={(e)=>setNewCert({...newCert,description:e.target.value})}
+        />
+
+        <button onClick={handleAdd}>Submit</button>
+
       </div>
 
       <div className="cert-table">
         <table>
+
           <thead>
             <tr>
               <th>Name</th>
-              <th>Issuer</th>
+              <th>Organization</th>
               <th>Date</th>
+              <th>Description</th>
+              <th>Certificate</th>
               <th>Status</th>
             </tr>
           </thead>
+
           <tbody>
             {certificates.map((cert) => (
+
               <tr key={cert.id}>
-                <td>{cert.name}</td>
-                <td>{cert.issuer}</td>
-                <td>{cert.date}</td>
+                <td>{cert.certificate_name || cert.name}</td>
+                <td>{cert.organization}</td>
+                <td>{cert.issue_date || cert.date}</td>
+
                 <td>
-                  <span className={`status ${cert.status.toLowerCase()}`}>{cert.status}</span>
+                  {cert.description ? cert.description.slice(0,40) : "-"}
                 </td>
+
+                <td>
+                  {cert.file_path ? (
+                    <a
+                      href={`http://localhost:5000/${cert.file_path}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View
+                    </a>
+                  ) : cert.file ? (
+                    <a
+                      href={URL.createObjectURL(cert.file)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View
+                    </a>
+                  ) : (
+                    "No File"
+                  )}
+                </td>
+
+                <td>
+                  <span className={`status ${(cert.status || "pending").toLowerCase()}`}>
+                    {cert.status || "Pending"}
+                  </span>
+                </td>
+
               </tr>
+
             ))}
           </tbody>
+
         </table>
       </div>
+
     </div>
   );
 }
