@@ -4,7 +4,22 @@ const path = require("path");
 const storage = multer.diskStorage({
 
   destination: (req, file, cb) => {
-    cb(null, "uploads/certificates");
+
+    // certificates upload
+    if (req.originalUrl.includes("certificates")) {
+      cb(null, "uploads/certificates");
+    }
+
+    // activities upload
+    else if (req.originalUrl.includes("activities")) {
+      cb(null, "uploads/activities");
+    }
+
+    // fallback
+    else {
+      cb(null, "uploads");
+    }
+
   },
 
   filename: (req, file, cb) => {

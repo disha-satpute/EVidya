@@ -1,84 +1,203 @@
-import React, { useState } from "react";
-import "../styles/ActivityPage.css"; // Namespaced CSS
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ActivitiesPage() {
-  const [activities, setActivities] = useState([
-    { id: 1, title: "AWS Cloud Practitioner", status: "Approved", time: "2 days ago" },
-    { id: 2, title: "National Hackathon", status: "Pending", time: "1 week ago" },
-  ]);
+
+  const fileInputRef = useRef(null);
+
+  const [activities, setActivities] = useState([]);
 
   const [newActivity, setNewActivity] = useState({
-    title: "",
-    status: "Pending",
-    time: "",
+    activity_title: "",
+    activity_type: "",
+    organization: "",
+    activity_date: "",
+    description: "",
+    proof_file: null
   });
 
-  const handleAdd = () => {
-    if (!newActivity.title || !newActivity.time) return;
-    setActivities([...activities, { ...newActivity, id: Date.now() }]);
-    setNewActivity({ title: "", status: "Pending", time: "" });
+  // Fetch activities from backend
+  const fetchActivities = async () => {
+    try {
+
+      const res = await axios.get(
+        "http://localhost:5000/api/activities/student",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      setActivities(res.data);
+
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (id) => {
-    setActivities(activities.filter((a) => a.id !== id));
+  // Load when page opens
+  useEffect(() => {
+    fetchActivities();
+  }, []);
+
+
+  const handleAdd = async () => {
+
+    if (!newActivity.activity_title || !newActivity.activity_type || !newActivity.organization || !newActivity.activity_date) {
+      toast.warning("Please fill all required fields!");
+      return;
+    }
+
+    try {
+
+      const formData = new FormData();
+
+      formData.append("activity_title", newActivity.activity_title);
+      formData.append("activity_type", newActivity.activity_type);
+      formData.append("organization", newActivity.organization);
+      formData.append("activity_date", newActivity.activity_date);
+      formData.append("description", newActivity.description);
+
+      if (newActivity.proof_file) {
+        formData.append("proof_file", newActivity.proof_file);
+      }
+
+      const res = await axios.post(
+        "http://localhost:5000/api/activities/add",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      setActivities([...activities, res.data]);
+
+      toast.success("Activity submitted successfully! Waiting for approval.");
+
+      setNewActivity({
+        activity_title: "",
+        activity_type: "",
+        organization: "",
+        activity_date: "",
+        description: "",
+        proof_file: null
+      });
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+    } catch (err) {
+
+      toast.error("Something went wrong");
+
+    }
+
   };
 
   return (
-    <div className="activities-page">
+    <div className="activities-section">
+
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <h2>Activities</h2>
 
-      {/* Add Activity Form */}
-      <div className="activity-form">
+      <div className="cert-form">
+
         <input
           type="text"
           placeholder="Activity Title"
-          value={newActivity.title}
-          onChange={(e) =>
-            setNewActivity({ ...newActivity, title: e.target.value })
-          }
+          value={newActivity.activity_title}
+          onChange={(e)=>setNewActivity({...newActivity,activity_title:e.target.value})}
         />
+
+        <select
+          value={newActivity.activity_type}
+          onChange={(e)=>setNewActivity({...newActivity,activity_type:e.target.value})}
+        >
+          <option value="">Activity Type</option>
+          <option>Hackathon</option>
+          <option>Workshop</option>
+          <option>Seminar</option>
+          <option>Competition</option>
+          <option>Internship</option>
+          <option>Volunteering</option>
+        </select>
+
         <input
           type="text"
-          placeholder="Time (e.g., 2 days ago)"
-          value={newActivity.time}
-          onChange={(e) =>
-            setNewActivity({ ...newActivity, time: e.target.value })
-          }
+          placeholder="Organization / Host"
+          value={newActivity.organization}
+          onChange={(e)=>setNewActivity({...newActivity,organization:e.target.value})}
         />
-        <select
-          value={newActivity.status}
-          onChange={(e) =>
-            setNewActivity({ ...newActivity, status: e.target.value })
-          }
-        >
-          <option value="Approved">Approved</option>
-          <option value="Pending">Pending</option>
-        </select>
+
+        <input
+          type="date"
+          value={newActivity.activity_date}
+          onChange={(e)=>setNewActivity({...newActivity,activity_date:e.target.value})}
+        />
+
+        <input
+          type="text"
+          placeholder="Description"
+          value={newActivity.description}
+          onChange={(e)=>setNewActivity({...newActivity,description:e.target.value})}
+        />
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={(e)=>setNewActivity({...newActivity,proof_file:e.target.files[0]})}
+        />
+
         <button onClick={handleAdd}>+ Add</button>
+
       </div>
 
-      {/* Activities List */}
-      <div className="activities-list">
-        {activities.map((activity) => (
-          <div key={activity.id} className="activity-card">
-            <div>
-              <h4>{activity.title}</h4>
-              <p className="time">{activity.time}</p>
-            </div>
-            <div className="action-group">
-              <span className={`status ${activity.status.toLowerCase()}`}>
-                {activity.status}
-              </span>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(activity.id)}
+      {activities.map((activity) => (
+
+        <div className="activity-card" key={activity.id}>
+
+          <div>
+
+            <h4>{activity.activity_title}</h4>
+
+            <p>{activity.activity_type} • {activity.organization}</p>
+
+            <p className="time">
+              {new Date(activity.activity_date).toLocaleDateString()}
+            </p>
+
+            {activity.description && (
+              <p>{activity.description.slice(0,50)}</p>
+            )}
+
+            {activity.proof_file && (
+              <a
+                href={`http://localhost:5000/${activity.proof_file}`}
+                target="_blank"
+                rel="noreferrer"
               >
-                Delete
-              </button>
-            </div>
+                View Proof
+              </a>
+            )}
+
           </div>
-        ))}
-      </div>
+
+          <span className={`status ${(activity.status || "pending").toLowerCase()}`}>
+            {activity.status || "Pending"}
+          </span>
+
+        </div>
+
+      ))}
+
     </div>
   );
 }

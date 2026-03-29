@@ -1,9 +1,13 @@
 import React, { useState, useEffect,useRef } from "react";
+
+
 import axios from "axios";
 import { Home, Calendar, User, Folder, Flame, Award } from "lucide-react";
 import "../styles/StudentDashboard.css";
 import ActivitiesPage from "./ActivityPage";
 import AgentPage from "./Agent";
+
+
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState("home");

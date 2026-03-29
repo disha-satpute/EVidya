@@ -81,3 +81,27 @@ CREATE TABLE certificates (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE activities (
+
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+
+activity_title VARCHAR(200) NOT NULL,
+
+activity_type VARCHAR(100) NOT NULL,
+
+organization VARCHAR(200) NOT NULL,
+
+activity_date DATE NOT NULL,
+
+description TEXT,
+
+proof_file TEXT,
+
+status VARCHAR(20) DEFAULT 'Pending',
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);

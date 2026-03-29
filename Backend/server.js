@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+
+
+const activityRoutes = require("./routes/activityRoutes");
 const pool = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
@@ -18,7 +21,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/certificates", certificateRoutes);
-
+app.use("/api/activities", activityRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
