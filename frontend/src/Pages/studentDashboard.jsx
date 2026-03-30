@@ -1,330 +1,176 @@
-import React, { useState, useEffect,useRef } from "react";
-
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Home, Calendar, User, Folder, Flame, Award } from "lucide-react";
+import { Home, Calendar, User, Folder, Award } from "lucide-react";
 import "../styles/StudentDashboard.css";
+
 import ActivitiesPage from "./ActivityPage";
+import CertificatesPage from "./CertificatesPage";
 import AgentPage from "./Agent";
 
-
-
 export default function StudentDashboard() {
-  const [activeTab, setActiveTab] = useState("home");
-  const [sidebarOpen, setSidebarOpen] = useState(false); // sidebar toggle state
 
-  const [user, setUser] = useState(null);
+const [activeTab, setActiveTab] = useState("home");
+const [sidebarOpen, setSidebarOpen] = useState(false);
+const [user, setUser] = useState(null);
 
-  
-  useEffect(() => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  setUser(storedUser);
+const [stats, setStats] = useState({
+certificates: 0,
+activities: 0,
+projects: 0,
+points: 0
+});
+
+useEffect(() => {
+
+const storedUser = JSON.parse(localStorage.getItem("user"));
+setUser(storedUser);
+
+fetchStats();
+
 }, []);
-  return (
-    
-    <>
-      {/* Toggle Button */}
-      <div className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        ☰
-      </div>
 
-      {/* Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <SidebarItem icon={<Home size={20} />} label="Home" active={activeTab === "home"} onClick={() => setActiveTab("home")} />
-        <SidebarItem icon={<Award size={20} />} label="Certificates" active={activeTab === "certificates"} onClick={() => setActiveTab("certificates")} />
-        <SidebarItem icon={<Calendar size={20} />} label="Activities" active={activeTab === "activities"} onClick={() => setActiveTab("activities")} />
-        <SidebarItem icon={<User size={20} />} label="Agent" active={activeTab === "agent"} onClick={() => setActiveTab("agent")} />
-        <SidebarItem icon={<Folder size={20} />} label="Portfolio" active={activeTab === "portfolio"} onClick={() => setActiveTab("portfolio")} />
-        
-      </div>
 
-      {/* Main Content */}
-      <div className={`dashboard-content ${sidebarOpen ? "open" : ""}`}>
-        <div className="student-dashboard">
-          {/* Header */}
-          <div className="header-card">
-            <div className="header-top">
-              <div>
-                <h2 className="platform-title">Smart Student Hub</h2>
-                <p className="subtitle">Digital Achievement Platform</p>
-              </div>
-              <div className="avatar">JS</div>
-            </div>
-            <div className="welcome-card">
-              <div>
-               <h3>Welcome back, {user?.full_name || "Student"}! 👋</h3>
-                <p>
-                  Computer Science Engineering <br />
-                  Final Year · Roll: CSE2021001
-                </p>
-              </div>
-              <div className="cgpa-box">
-                <p className="cgpa">8.7</p>
-                <span>Current CGPA</span>
-              </div>
-            </div>
-          </div>
+const fetchStats = async () => {
 
-          {/* Conditional Rendering */}
-          {activeTab === "home" && (
-            <>
-              <div className="stats-grid">
-                <div onClick={() => setActiveTab("certificates")}>
-                  <StatCard icon="✅" label="Certifications" value="24" />
-                </div>
-                <StatCard icon="📅" label="Events Attended" value="12" />
-                <StatCard icon="📂" label="Projects" value="8" />
-                <StatCard icon="🔥" label="Activity Points" value="156" />
-              </div>
+try{
 
-              <div className="activities-section">
-                <h2>Recent Activities</h2>
-                <ActivityCard title="AWS Cloud Practitioner" status="Approved" time="2 days ago" />
-                <ActivityCard title="National Hackathon" status="Pending" time="1 week ago" />
-              </div>
-            </>
-          )}
+const token = localStorage.getItem("token");
 
-          {activeTab === "certificates" && <CertificatesPage />}
-          {activeTab === "activities" && <ActivitiesPage />}
-          {activeTab === "agent" && <AgentPage />}
-          {activeTab === "portfolio" && <div>Portfolio page coming soon...</div>}
-          
-        </div>
-      </div>
-    </>
-  );
+const certRes = await axios.get(
+"http://localhost:5000/api/certificates/student",
+{ headers:{ Authorization:`Bearer ${token}` } }
+);
+
+const actRes = await axios.get(
+"http://localhost:5000/api/activities/student",
+{ headers:{ Authorization:`Bearer ${token}` } }
+);
+
+setStats({
+certificates: certRes.data.length,
+activities: actRes.data.length,
+projects: 0,
+points: 0
+});
+
+}catch(err){
+console.error(err);
 }
 
-// Sidebar Item
-function SidebarItem({ icon, label, active, onClick }) {
-  return (
-    <div className={`sidebar-item ${active ? "active" : ""}`} onClick={onClick}>
-      {icon}
-      <span>{label}</span>
-    </div>
-  );
+};
+
+
+return (
+<>
+<div className="sidebar-toggle" onClick={()=>setSidebarOpen(!sidebarOpen)}>☰</div>
+
+<div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+
+<SidebarItem icon={<Home size={20}/>} label="Home"
+active={activeTab==="home"} onClick={()=>setActiveTab("home")}/>
+
+<SidebarItem icon={<Award size={20}/>} label="Certificates"
+active={activeTab==="certificates"} onClick={()=>setActiveTab("certificates")}/>
+
+<SidebarItem icon={<Calendar size={20}/>} label="Activities"
+active={activeTab==="activities"} onClick={()=>setActiveTab("activities")}/>
+
+<SidebarItem icon={<User size={20}/>} label="Agent"
+active={activeTab==="agent"} onClick={()=>setActiveTab("agent")}/>
+
+<SidebarItem icon={<Folder size={20}/>} label="Portfolio"
+active={activeTab==="portfolio"} onClick={()=>setActiveTab("portfolio")}/>
+
+</div>
+
+
+<div className={`dashboard-content ${sidebarOpen ? "open" : ""}`}>
+<div className="student-dashboard">
+
+
+<div className="header-card">
+
+<div className="header-top">
+
+<div>
+<h2 className="platform-title">Smart Student Hub</h2>
+<p className="subtitle">Digital Achievement Platform</p>
+</div>
+
+<div className="avatar">
+{user?.full_name?.charAt(0) || "S"}
+</div>
+
+</div>
+
+
+<div className="welcome-card">
+
+<div>
+<h3>Welcome back, {user?.full_name || "Student"} 👋</h3>
+<p>Computer Science Engineering<br/>Final Year</p>
+</div>
+
+<div className="cgpa-box">
+<p className="cgpa">8.7</p>
+<span>Current CGPA</span>
+</div>
+
+</div>
+
+</div>
+
+
+{activeTab==="home" && (
+
+<div className="stats-grid">
+
+<StatCard icon="🏆" label="Certificates" value={stats.certificates}/>
+<StatCard icon="📅" label="Activities" value={stats.activities}/>
+<StatCard icon="📂" label="Projects" value={stats.projects}/>
+<StatCard icon="🔥" label="Points" value={stats.points}/>
+
+</div>
+
+)}
+
+{activeTab==="certificates" && <CertificatesPage/>}
+{activeTab==="activities" && <ActivitiesPage/>}
+{activeTab==="agent" && <AgentPage/>}
+
+</div>
+</div>
+</>
+);
 }
 
-// Certificates Page
-// Certificates Page
-function CertificatesPage() {
-const fileInputRef = useRef(null);
-  const [certificates, setCertificates] = useState([]);
 
-  const [newCert, setNewCert] = useState({
-    name: "",
-    organization: "",
-    date: "",
-    description: "",
-    file: null,
-    status: "Pending"
-  });
+function SidebarItem({icon,label,active,onClick}){
 
-  // Fetch certificates from backend
-  const fetchCertificates = async () => {
-    try {
+return(
+<div className={`sidebar-item ${active ? "active" : ""}`} onClick={onClick}>
+{icon}
+<span>{label}</span>
+</div>
+);
 
-      const res = await axios.get(
-        "http://localhost:5000/api/certificates/student",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      );
-
-      setCertificates(res.data);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Run when page loads
-  useEffect(() => {
-    fetchCertificates();
-  }, []);
-
-  const handleAdd = async () => {
-
-    if (!newCert.name || !newCert.organization || !newCert.date) {
-      alert("Please fill required fields");
-      return;
-    }
-
-    try {
-
-      const formData = new FormData();
-
-      formData.append("certificate_name", newCert.name);
-      formData.append("organization", newCert.organization);
-      formData.append("issue_date", newCert.date);
-      formData.append("description", newCert.description);
-
-      if (newCert.file) {
-        formData.append("certificate", newCert.file);
-      }
-
-      const res = await axios.post(
-        "http://localhost:5000/api/certificates/add",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      );
-
-      // update table
-      setCertificates([...certificates, res.data]);
-
-      // reset form
-      setNewCert({
-        name: "",
-        organization: "",
-        date: "",
-        description: "",
-        file: null,
-        status: "Pending"
-      });
-
-      if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-}
-    } catch (err) {
-      console.error(err);
-      alert("Certificate upload failed");
-    }
-  };
-
-  return (
-    <div className="activities-section">
-      <h2>Certificates</h2>
-
-      <div className="cert-form">
-
-        <input
-          type="text"
-          placeholder="Certificate Name"
-          value={newCert.name}
-          onChange={(e)=>setNewCert({...newCert,name:e.target.value})}
-        />
-
-        <input
-          type="text"
-          placeholder="Issuing Organization"
-          value={newCert.organization}
-          onChange={(e)=>setNewCert({...newCert,organization:e.target.value})}
-        />
-
-        <input
-          type="date"
-          value={newCert.date}
-          onChange={(e)=>setNewCert({...newCert,date:e.target.value})}
-        />
-
-        <input
-           type="file"
-           ref={fileInputRef}
-          onChange={(e)=>setNewCert({...newCert,file:e.target.files[0]})}
-        />
-
-        <input
-          type="text"
-          placeholder="Description"
-          value={newCert.description}
-          onChange={(e)=>setNewCert({...newCert,description:e.target.value})}
-        />
-
-        <button onClick={handleAdd}>Submit</button>
-
-      </div>
-
-      <div className="cert-table">
-        <table>
-
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Organization</th>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Certificate</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {certificates.map((cert) => (
-
-              <tr key={cert.id}>
-                <td>{cert.certificate_name || cert.name}</td>
-                <td>{cert.organization}</td>
-                <td>{cert.issue_date || cert.date}</td>
-
-                <td>
-                  {cert.description ? cert.description.slice(0,40) : "-"}
-                </td>
-
-                <td>
-                  {cert.file_path ? (
-                    <a
-                      href={`http://localhost:5000/${cert.file_path}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View
-                    </a>
-                  ) : cert.file ? (
-                    <a
-                      href={URL.createObjectURL(cert.file)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View
-                    </a>
-                  ) : (
-                    "No File"
-                  )}
-                </td>
-
-                <td>
-                  <span className={`status ${(cert.status || "pending").toLowerCase()}`}>
-                    {cert.status || "Pending"}
-                  </span>
-                </td>
-
-              </tr>
-
-            ))}
-          </tbody>
-
-        </table>
-      </div>
-
-    </div>
-  );
 }
 
-// StatCard
-function StatCard({ icon, label, value }) {
-  return (
-    <div className="stat-card">
-      <span className="icon">{icon}</span>
-      <p className="value">{value}</p>
-      <p className="label">{label}</p>
-    </div>
-  );
-}
 
-// ActivityCard
-function ActivityCard({ title, status, time }) {
-  return (
-    <div className="activity-card">
-      <h4>{title}</h4>
-      <p className="time">{time}</p>
-      <span className={`status ${status.toLowerCase()}`}>{status}</span>
-    </div>
-  );
+function StatCard({icon,label,value}){
+
+return(
+
+<div className="stat-card">
+
+<div className="stat-icon">{icon}</div>
+
+<h2 className="stat-value">{value}</h2>
+
+<p className="stat-label">{label}</p>
+
+</div>
+
+);
+
 }

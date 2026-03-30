@@ -89,3 +89,40 @@ exports.loginFaculty = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getDashboardStats = async (req, res) => {
+  try {
+
+    const pendingCertificates = await pool.query(
+      "SELECT COUNT(*) FROM certificates WHERE status='Pending'"
+    );
+
+    const pendingActivities = await pool.query(
+      "SELECT COUNT(*) FROM activities WHERE status='Pending'"
+    );
+
+    const approvedThisMonth = await pool.query(`
+      SELECT COUNT(*)
+      FROM certificates
+      WHERE status='Approved'
+      AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)
+    `);
+
+    const totalStudents = await pool.query(
+      "SELECT COUNT(*) FROM students"
+    );
+
+    res.json({
+      pendingCertificates: pendingCertificates.rows[0].count,
+      pendingActivities: pendingActivities.rows[0].count,
+      approvedThisMonth: approvedThisMonth.rows[0].count,
+      totalStudents: totalStudents.rows[0].count
+    });
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+
+  }
+};
