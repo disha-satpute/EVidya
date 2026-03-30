@@ -212,3 +212,44 @@ body, html {
     padding: 0.3rem 0.6rem;
     font-size: 0.85rem;
   }
+
+  .faculty-filters{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.faculty-filter{
+padding:6px 14px;
+border-radius:20px;
+border:none;
+background:#e9e9f3;
+cursor:pointer;
+font-size:14px;
+}
+
+.faculty-filter.active{
+background:#6c63ff;
+color:white;
+}
+.faculty-filters{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.faculty-filter{
+padding:6px 14px;
+border-radius:20px;
+border:none;
+background:#e9e9f3;
+cursor:pointer;
+font-size:14px;
+}
+
+.faculty-filter.active{
+background:#6c63ff;
+color:white;
+}

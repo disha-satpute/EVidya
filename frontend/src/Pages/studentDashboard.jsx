@@ -1,6 +1,5 @@
 import React, { useState, useEffect,useRef } from "react";
 
-
 import axios from "axios";
 import { Home, Calendar, User, Folder, Flame, Award } from "lucide-react";
 import "../styles/StudentDashboard.css";
@@ -13,7 +12,15 @@ export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false); // sidebar toggle state
 
+  const [user, setUser] = useState(null);
+
+  
+  useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  setUser(storedUser);
+}, []);
   return (
+    
     <>
       {/* Toggle Button */}
       <div className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -44,7 +51,7 @@ export default function StudentDashboard() {
             </div>
             <div className="welcome-card">
               <div>
-                <h3>Welcome back, John! 👋</h3>
+               <h3>Welcome back, {user?.full_name || "Student"}! 👋</h3>
                 <p>
                   Computer Science Engineering <br />
                   Final Year · Roll: CSE2021001
