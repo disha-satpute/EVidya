@@ -3,27 +3,27 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function ActivitiesPage() {
+export default function CertificatesPage() {
 
   const fileInputRef = useRef(null);
 
-  const [activities, setActivities] = useState([]);
+  const [certificates, setCertificates] = useState([]);
 
-  const [newActivity, setNewActivity] = useState({
-    activity_title: "",
-    activity_type: "",
+  const [newCert, setNewCert] = useState({
+    certificate_name: "",
     organization: "",
-    activity_date: "",
+    issue_date: "",
     description: "",
-    proof_file: null
+    level: "",
+    certificate: null
   });
 
-  // Fetch activities from backend
-  const fetchActivities = async () => {
+  // Fetch certificates
+  const fetchCertificates = async () => {
     try {
 
       const res = await axios.get(
-        "http://localhost:5000/api/activities/student",
+        "http://localhost:5000/api/certificates/student",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -31,22 +31,23 @@ export default function ActivitiesPage() {
         }
       );
 
-      setActivities(res.data);
+      setCertificates(res.data);
 
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Load when page opens
   useEffect(() => {
-    fetchActivities();
+    fetchCertificates();
   }, []);
-
 
   const handleAdd = async () => {
 
-    if (!newActivity.activity_title || !newActivity.activity_type || !newActivity.organization || !newActivity.activity_date) {
+    if (!newCert.certificate_name ||
+        !newCert.organization ||
+        !newCert.issue_date) {
+
       toast.warning("Please fill all required fields!");
       return;
     }
@@ -55,18 +56,18 @@ export default function ActivitiesPage() {
 
       const formData = new FormData();
 
-      formData.append("activity_title", newActivity.activity_title);
-      formData.append("activity_type", newActivity.activity_type);
-      formData.append("organization", newActivity.organization);
-      formData.append("activity_date", newActivity.activity_date);
-      formData.append("description", newActivity.description);
+      formData.append("certificate_name", newCert.certificate_name);
+      formData.append("organization", newCert.organization);
+      formData.append("issue_date", newCert.issue_date);
+      formData.append("description", newCert.description);
+      formData.append("level", newCert.level);
 
-      if (newActivity.proof_file) {
-        formData.append("proof_file", newActivity.proof_file);
+      if (newCert.certificate) {
+        formData.append("certificate", newCert.certificate);
       }
 
       const res = await axios.post(
-        "http://localhost:5000/api/activities/add",
+        "http://localhost:5000/api/certificates/add",
         formData,
         {
           headers: {
@@ -76,17 +77,17 @@ export default function ActivitiesPage() {
         }
       );
 
-      setActivities([...activities, res.data]);
+      setCertificates([...certificates, res.data]);
 
-      toast.success("Activity submitted successfully! Waiting for approval.");
+      toast.success("Certificate submitted successfully! Waiting for approval.");
 
-      setNewActivity({
-        activity_title: "",
-        activity_type: "",
+      setNewCert({
+        certificate_name: "",
         organization: "",
-        activity_date: "",
+        issue_date: "",
         description: "",
-        proof_file: null
+        level: "",
+        certificate: null
       });
 
       if (fileInputRef.current) {
@@ -106,92 +107,94 @@ export default function ActivitiesPage() {
 
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <h2>Activities</h2>
+      <h2>Certificates</h2>
 
       <div className="cert-form">
 
         <input
           type="text"
-          placeholder="Activity Title"
-          value={newActivity.activity_title}
-          onChange={(e)=>setNewActivity({...newActivity,activity_title:e.target.value})}
+          placeholder="Certificate Name"
+          value={newCert.certificate_name}
+          onChange={(e)=>setNewCert({...newCert,certificate_name:e.target.value})}
         />
-
-        <select
-          value={newActivity.activity_type}
-          onChange={(e)=>setNewActivity({...newActivity,activity_type:e.target.value})}
-        >
-          <option value="">Activity Type</option>
-          <option>Hackathon</option>
-          <option>Workshop</option>
-          <option>Seminar</option>
-          <option>Competition</option>
-          <option>Internship</option>
-          <option>Volunteering</option>
-        </select>
 
         <input
           type="text"
-          placeholder="Organization / Host"
-          value={newActivity.organization}
-          onChange={(e)=>setNewActivity({...newActivity,organization:e.target.value})}
+          placeholder="Issuing Organization"
+          value={newCert.organization}
+          onChange={(e)=>setNewCert({...newCert,organization:e.target.value})}
         />
 
         <input
           type="date"
-          value={newActivity.activity_date}
-          onChange={(e)=>setNewActivity({...newActivity,activity_date:e.target.value})}
+          value={newCert.issue_date}
+          onChange={(e)=>setNewCert({...newCert,issue_date:e.target.value})}
         />
+
+        <select
+          value={newCert.level}
+          onChange={(e)=>setNewCert({...newCert,level:e.target.value})}
+        >
+          <option value="">Certificate Level</option>
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+          <option>Professional</option>
+        </select>
 
         <input
           type="text"
           placeholder="Description"
-          value={newActivity.description}
-          onChange={(e)=>setNewActivity({...newActivity,description:e.target.value})}
+          value={newCert.description}
+          onChange={(e)=>setNewCert({...newCert,description:e.target.value})}
         />
 
         <input
           type="file"
           ref={fileInputRef}
-          onChange={(e)=>setNewActivity({...newActivity,proof_file:e.target.files[0]})}
+          onChange={(e)=>setNewCert({...newCert,certificate:e.target.files[0]})}
         />
 
         <button onClick={handleAdd}>+ Add</button>
 
       </div>
 
-      {activities.map((activity) => (
+      {certificates.map((cert) => (
 
-        <div className="activity-card" key={activity.id}>
+        <div className="activity-card" key={cert.id}>
 
           <div>
 
-            <h4>{activity.activity_title}</h4>
+            <h4>{cert.certificate_name}</h4>
 
-            <p>{activity.activity_type} • {activity.organization}</p>
+            <p>{cert.organization}</p>
 
             <p className="time">
-              {new Date(activity.activity_date).toLocaleDateString()}
+              {new Date(cert.issue_date).toLocaleDateString()}
             </p>
 
-            {activity.description && (
-              <p>{activity.description.slice(0,50)}</p>
+            {cert.level && (
+              <p>Level: {cert.level}</p>
             )}
 
-            {activity.proof_file && (
+            {cert.description && (
+              <p>{cert.description.slice(0,50)}</p>
+            )}
+
+            {cert.file_path && (
               <a
-                href={`http://localhost:5000/${activity.proof_file}`}
+                href={`http://localhost:5000/${cert.file_path}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                View Proof
+                View Certificate
               </a>
             )}
 
           </div>
 
-          <span className={`status ${(activity.status || "pending").toLowerCase()}`}>
-            {activity.status || "Pending"}
+          <span className={`status ${(cert.status || "pending").toLowerCase()}`}>
+            {cert.status || "Pending"}
           </span>
 
         </div>

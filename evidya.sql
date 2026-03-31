@@ -105,3 +105,9 @@ status VARCHAR(20) DEFAULT 'Pending',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
+
+ALTER TABLE certificates
+ADD COLUMN level VARCHAR(30);
+
+	ALTER TABLE certificates
+ADD COLUMN points INTEGER DEFAULT 0;
