@@ -5,6 +5,7 @@ import "../styles/StudentDashboard.css";
 
 import ActivitiesPage from "./ActivityPage";
 import CertificatesPage from "./CertificatesPage";
+import ProjectsPage from "./ProjectPage";
 import ProfilePage from "./ProfilePage";
 import AgentPage from "./Agent";
 
@@ -184,7 +185,7 @@ onClick={()=>setActiveTab("profile")}
 
 {activeTab==="activities" && <ActivitiesPage/>}
 
-
+{activeTab==="project" && <ProjectsPage/>}
 
 </div>
 </div>

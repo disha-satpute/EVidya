@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
+const {
+addProject,
+getStudentProjects
+} = require("../controllers/projectController");
+
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
-const {
-addProject,
-getStudentProjects,
-deleteProject
-} = require("../controllers/projectController");
 
 router.post(
 "/add",
@@ -21,12 +21,6 @@ router.get(
 "/student",
 authMiddleware,
 getStudentProjects
-);
-
-router.delete(
-"/:id",
-authMiddleware,
-deleteProject
 );
 
 module.exports = router;
