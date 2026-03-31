@@ -102,9 +102,9 @@ const LandingPage = () => {
             </p>
 
             <div className="hero-actions">
-              <Link to="/Register">
+              <Link to="/leaderboard">
                 <button className="btn btn-primary">
-                  Start Your Journey{" "}
+                  View Leaderboard{" "}
                   <ArrowRight size={18} style={{ marginLeft: "8px" }} />
                 </button>
               </Link>

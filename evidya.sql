@@ -113,3 +113,43 @@ ALTER TABLE activities ADD COLUMN points INTEGER DEFAULT 0;
 
 ALTER TABLE students
 ADD COLUMN total_points INTEGER DEFAULT 0;
+
+ALTER TABLE students
+ADD COLUMN prn VARCHAR(50),
+ADD COLUMN branch VARCHAR(100),
+ADD COLUMN year VARCHAR(20),
+ADD COLUMN cgpa DECIMAL(3,2),
+ADD COLUMN github_link TEXT,
+ADD COLUMN linkedin_link TEXT;
+
+CREATE TABLE projects (
+
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+
+project_title VARCHAR(200) NOT NULL,
+
+description TEXT,
+
+technologies TEXT,
+
+category VARCHAR(100),
+
+project_level VARCHAR(100),
+
+start_date DATE,
+
+end_date DATE,
+
+github_link TEXT,
+
+demo_link TEXT,
+
+video_link TEXT,
+
+screenshot TEXT,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);

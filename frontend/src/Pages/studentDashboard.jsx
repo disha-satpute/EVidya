@@ -5,6 +5,7 @@ import "../styles/StudentDashboard.css";
 
 import ActivitiesPage from "./ActivityPage";
 import CertificatesPage from "./CertificatesPage";
+import ProfilePage from "./ProfilePage";
 import AgentPage from "./Agent";
 
 export default function StudentDashboard() {
@@ -12,6 +13,7 @@ export default function StudentDashboard() {
 const [activeTab, setActiveTab] = useState("home");
 const [sidebarOpen, setSidebarOpen] = useState(false);
 const [user, setUser] = useState(null);
+const [profile,setProfile] = useState(null);
 
 const [stats, setStats] = useState({
 certificates: 0,
@@ -26,6 +28,7 @@ const storedUser = JSON.parse(localStorage.getItem("user"));
 setUser(storedUser);
 
 fetchStats();
+fetchProfile();
 
 }, []);
 
@@ -57,6 +60,27 @@ activities: actRes.data.length,
 projects: 0,
 points: profileRes.data.total_points || 0
 });
+
+}catch(err){
+console.error(err);
+}
+
+};
+
+
+const fetchProfile = async ()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+const res = await axios.get(
+"http://localhost:5000/api/students/profile",
+{ headers:{ Authorization:`Bearer ${token}` } }
+);
+
+setProfile(res.data);
+
 }catch(err){
 console.error(err);
 }
@@ -104,7 +128,10 @@ active={activeTab==="portfolio"} onClick={()=>setActiveTab("portfolio")}/>
 <p className="subtitle">Digital Achievement Platform</p>
 </div>
 
-<div className="avatar">
+<div
+className="avatar"
+onClick={()=>setActiveTab("profile")}
+>
 {user?.full_name?.charAt(0) || "S"}
 </div>
 
@@ -113,13 +140,19 @@ active={activeTab==="portfolio"} onClick={()=>setActiveTab("portfolio")}/>
 
 <div className="welcome-card">
 
-<div>
-<h3>Welcome back, {user?.full_name || "Student"} 👋</h3>
-<p>Computer Science Engineering<br/>Final Year</p>
+<div className="welcome-info">
+
+<h3>Welcome back, {profile?.full_name || "Student"} 👋</h3>
+
+<p>
+<strong>Branch:</strong> {profile?.branch || ""} <br/>
+<strong>Year:</strong> {profile?.year || ""}
+</p>
+
 </div>
 
 <div className="cgpa-box">
-<p className="cgpa">8.7</p>
+<p className="cgpa">{profile?.cgpa || "0.0"}</p>
 <span>Current CGPA</span>
 </div>
 
@@ -141,9 +174,17 @@ active={activeTab==="portfolio"} onClick={()=>setActiveTab("portfolio")}/>
 
 )}
 
+{activeTab==="profile" && (
+  <ProfilePage
+    refreshProfile={fetchProfile}
+    refreshStats={fetchStats}
+  />
+)}
 {activeTab==="certificates" && <CertificatesPage/>}
+
 {activeTab==="activities" && <ActivitiesPage/>}
-{activeTab==="agent" && <AgentPage/>}
+
+
 
 </div>
 </div>

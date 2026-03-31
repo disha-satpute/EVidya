@@ -9,7 +9,7 @@ const pool = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
-
+const leaderboardRoutes = require("./routes/LeaderboardRoutes");
 
 const app = express();
 
@@ -22,6 +22,7 @@ app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/activities", activityRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({

@@ -96,8 +96,67 @@ exports.getStudentProfile = async (req, res) => {
     const studentId = req.user.id;
 
     const result = await pool.query(
-      "SELECT full_name,email,total_points FROM students WHERE id=$1",
+
+      `SELECT 
+      full_name,
+      email,
+      prn,
+      branch,
+      year,
+      cgpa,
+      github_link,
+      linkedin_link,
+      total_points
+      FROM students
+      WHERE id=$1`,
+
       [studentId]
+
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+
+  }
+
+};
+
+exports.updateStudentProfile = async (req, res) => {
+
+  try {
+
+    const studentId = req.user.id;
+
+    const {
+      full_name,
+      prn,
+      branch,
+      year,
+      cgpa,
+      github_link,
+      linkedin_link
+    } = req.body;
+
+    const result = await pool.query(
+
+      `UPDATE students
+       SET
+       full_name=$1,
+       prn=$2,
+       branch=$3,
+       year=$4,
+       cgpa=$5,
+       github_link=$6,
+       linkedin_link=$7
+       WHERE id=$8
+       RETURNING *`,
+
+      [full_name, prn, branch, year, cgpa, github_link, linkedin_link, studentId]
+
     );
 
     res.json(result.rows[0]);
