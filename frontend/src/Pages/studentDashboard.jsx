@@ -46,13 +46,17 @@ const actRes = await axios.get(
 { headers:{ Authorization:`Bearer ${token}` } }
 );
 
+const profileRes = await axios.get(
+"http://localhost:5000/api/students/profile",
+{ headers:{ Authorization:`Bearer ${token}` } }
+);
+
 setStats({
 certificates: certRes.data.length,
 activities: actRes.data.length,
 projects: 0,
-points: 0
+points: profileRes.data.total_points || 0
 });
-
 }catch(err){
 console.error(err);
 }
@@ -69,14 +73,17 @@ return (
 <SidebarItem icon={<Home size={20}/>} label="Home"
 active={activeTab==="home"} onClick={()=>setActiveTab("home")}/>
 
+<SidebarItem icon={<User size={20}/>} label="Profile"
+active={activeTab==="profile"} onClick={()=>setActiveTab("profile")}/>
+
 <SidebarItem icon={<Award size={20}/>} label="Certificates"
 active={activeTab==="certificates"} onClick={()=>setActiveTab("certificates")}/>
 
 <SidebarItem icon={<Calendar size={20}/>} label="Activities"
 active={activeTab==="activities"} onClick={()=>setActiveTab("activities")}/>
 
-<SidebarItem icon={<User size={20}/>} label="Agent"
-active={activeTab==="agent"} onClick={()=>setActiveTab("agent")}/>
+<SidebarItem icon={<User size={20}/>} label="Projects"
+active={activeTab==="project"} onClick={()=>setActiveTab("project")}/>
 
 <SidebarItem icon={<Folder size={20}/>} label="Portfolio"
 active={activeTab==="portfolio"} onClick={()=>setActiveTab("portfolio")}/>

@@ -4,7 +4,13 @@ const addActivity = async (req, res) => {
 
   try {
 
-    const { activity_title, activity_type, organization, activity_date, description } = req.body;
+    const {
+      activity_title,
+      activity_type,
+      organization,
+      activity_date,
+      description
+    } = req.body;
 
     const studentId = req.user.id;
 
@@ -89,17 +95,69 @@ const approveActivity = async (req, res) => {
 
     const { id } = req.params;
 
-    await db.query(
-
-      "UPDATE activities SET status='Approved' WHERE id=$1",
+    const activityData = await db.query(
+      "SELECT * FROM activities WHERE id=$1",
       [id]
-
     );
 
-    res.json({ message: "Activity approved" });
+    const activity = activityData.rows[0];
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    if (activity.status === "Approved") {
+      return res.json({ message: "Already approved" });
+    }
+
+    let points = 0;
+
+    switch (activity.activity_type) {
+
+      case "Hackathon":
+        points = 100;
+        break;
+
+      case "Competition":
+        points = 80;
+        break;
+
+      case "Internship":
+        points = 120;
+        break;
+
+      case "Workshop":
+        points = 40;
+        break;
+
+      case "Seminar":
+        points = 30;
+        break;
+
+      case "Volunteering":
+        points = 25;
+        break;
+
+      default:
+        points = 20;
+
+    }
+
+    await db.query(
+      "UPDATE activities SET status='Approved', points=$1 WHERE id=$2",
+      [points, id]
+    );
+
+    await db.query(
+      "UPDATE students SET total_points = total_points + $1 WHERE id=$2",
+      [points, activity.student_id]
+    );
+
+    res.json({ message: "Activity approved", points });
 
   } catch (err) {
 
+    console.error(err);
     res.status(500).json({ message: "Server error" });
 
   }
@@ -114,10 +172,8 @@ const rejectActivity = async (req, res) => {
     const { id } = req.params;
 
     await db.query(
-
       "UPDATE activities SET status='Rejected' WHERE id=$1",
       [id]
-
     );
 
     res.json({ message: "Activity rejected" });
@@ -129,6 +185,7 @@ const rejectActivity = async (req, res) => {
   }
 
 };
+
 
 module.exports = {
   addActivity,
