@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import FacultyCertificates from "./facultyCertificates";
 import FacultyActivities from "./facultyActivities";
 import FacultyProjects from "./facultyProjects";
+import FacultyPublications from "./facultyPublications"; 
+
 import "../styles/FacultyDashboard.css";
 
 export default function FacultyDashboard() {
@@ -17,7 +20,7 @@ export default function FacultyDashboard() {
     pendingCertificates: 0,
     pendingActivities: 0,
     pendingProjects: 0,
-    approvedThisMonth: 0,
+    pendingPublications: 0,
     totalStudents: 0
   });
 
@@ -86,9 +89,7 @@ export default function FacultyDashboard() {
         <p>Review student submissions</p>
       </header>
 
-
-      {/* Dashboard Counters */}
-
+      {/* Stats */}
       <div className="faculty-stats">
 
         <div className="stat-card">
@@ -101,10 +102,15 @@ export default function FacultyDashboard() {
           <p>{stats.pendingActivities}</p>
         </div>
 
-        
         <div className="stat-card">
           <h3>Pending Projects</h3>
           <p>{stats.pendingProjects}</p>
+        </div>
+
+
+        <div className="stat-card">
+          <h3>Pending Publications</h3>
+          <p>{stats.pendingPublications}</p>
         </div>
 
         <div className="stat-card">
@@ -113,7 +119,6 @@ export default function FacultyDashboard() {
         </div>
 
       </div>
-
 
       {/* Tabs */}
       <div className="faculty-tabs">
@@ -139,14 +144,20 @@ export default function FacultyDashboard() {
           Projects
         </button>
 
+        <button
+          className={`faculty-tab ${activeTab === "publications" ? "faculty-active" : ""}`}
+          onClick={() => setActiveTab("publications")}
+        >
+          Publications
+        </button>
+
       </div>
 
-
       {/* Render Pages */}
-
       {activeTab === "certificates" && <FacultyCertificates />}
       {activeTab === "activities" && <FacultyActivities />}
       {activeTab === "projects" && <FacultyProjects />}
+      {activeTab === "publications" && <FacultyPublications />}
 
     </div>
   );

@@ -155,3 +155,29 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE projects ADD COLUMN status VARCHAR(20) DEFAULT 'Pending';
+
+
+CREATE TABLE publications (
+
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+
+  title TEXT NOT NULL,
+  publication_type TEXT,
+
+  journal_name TEXT,
+  publisher TEXT,
+
+  publication_date DATE,
+
+  doi_link TEXT,
+  paper_link TEXT,
+  certificate_link TEXT,
+
+  status TEXT DEFAULT 'Pending',
+  points INT DEFAULT 0,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);

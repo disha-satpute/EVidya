@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Home, Calendar, User, Folder, Award } from "lucide-react";
+import { Home, Calendar, User, Folder, Award, BookOpen } from "lucide-react";
 import "../styles/StudentDashboard.css";
 
 import ActivitiesPage from "./ActivityPage";
 import CertificatesPage from "./CertificatesPage";
 import ProjectsPage from "./ProjectPage";
 import ProfilePage from "./ProfilePage";
-import AgentPage from "./Agent";
+import PublicationPage from "./PublicationPage";   // ✅ ADD THIS
 
 export default function StudentDashboard() {
 
@@ -20,6 +20,7 @@ export default function StudentDashboard() {
     certificates: 0,
     activities: 0,
     projects: 0,
+    publications: 0,   // ✅ NEW
     points: 0
   });
 
@@ -31,13 +32,15 @@ export default function StudentDashboard() {
     fetchProfile();
   }, []);
 
-  // 🔥 Refresh when tab changes
   useEffect(() => {
     fetchStats();
   }, [activeTab]);
 
+  /* ================= FETCH STATS ================= */
+
   const fetchStats = async () => {
     try {
+
       const token = localStorage.getItem("token");
 
       const certRes = await axios.get(
@@ -55,6 +58,11 @@ export default function StudentDashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      const pubRes = await axios.get(
+        "http://localhost:5000/api/publications/student",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       const profileRes = await axios.get(
         "http://localhost:5000/api/students/profile",
         { headers: { Authorization: `Bearer ${token}` } }
@@ -63,7 +71,8 @@ export default function StudentDashboard() {
       setStats({
         certificates: certRes.data.length,
         activities: actRes.data.length,
-        projects: projRes.data.length,   // ✅ FIXED
+        projects: projRes.data.length,
+        publications: pubRes.data.length,  // ✅ NEW
         points: profileRes.data.total_points || 0
       });
 
@@ -72,8 +81,11 @@ export default function StudentDashboard() {
     }
   };
 
+  /* ================= FETCH PROFILE ================= */
+
   const fetchProfile = async () => {
     try {
+
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
@@ -97,6 +109,7 @@ export default function StudentDashboard() {
         ☰
       </div>
 
+      {/* SIDEBAR */}
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
 
         <SidebarItem
@@ -134,18 +147,21 @@ export default function StudentDashboard() {
           onClick={() => setActiveTab("project")}
         />
 
+        {/* ✅ NEW PUBLICATIONS TAB */}
         <SidebarItem
-          icon={<Folder size={20} />}
-          label="Portfolio"
-          active={activeTab === "portfolio"}
-          onClick={() => setActiveTab("portfolio")}
+          icon={<BookOpen size={20} />}
+          label="Publications"
+          active={activeTab === "publications"}
+          onClick={() => setActiveTab("publications")}
         />
 
       </div>
 
+      {/* MAIN CONTENT */}
       <div className={`dashboard-content ${sidebarOpen ? "open" : ""}`}>
         <div className="student-dashboard">
 
+          {/* HEADER */}
           <div className="header-card">
 
             <div className="header-top">
@@ -163,6 +179,7 @@ export default function StudentDashboard() {
             </div>
 
             <div className="welcome-card">
+
               <div className="welcome-info">
                 <h3>
                   Welcome back, {profile?.full_name || "Student"} 👋
@@ -178,6 +195,7 @@ export default function StudentDashboard() {
                 <p className="cgpa">{profile?.cgpa || "0.0"}</p>
                 <span>Current CGPA</span>
               </div>
+
             </div>
 
           </div>
@@ -185,10 +203,13 @@ export default function StudentDashboard() {
           {/* HOME DASHBOARD */}
           {activeTab === "home" && (
             <div className="stats-grid">
+
               <StatCard icon="🏆" label="Certificates" value={stats.certificates} />
               <StatCard icon="📅" label="Activities" value={stats.activities} />
               <StatCard icon="📂" label="Projects" value={stats.projects} />
+              <StatCard icon="📄" label="Publications" value={stats.publications} /> {/* ✅ NEW */}
               <StatCard icon="🔥" label="Points" value={stats.points} />
+
             </div>
           )}
 
@@ -201,11 +222,15 @@ export default function StudentDashboard() {
           )}
 
           {activeTab === "certificates" && <CertificatesPage />}
-
           {activeTab === "activities" && <ActivitiesPage />}
 
           {activeTab === "project" && (
             <ProjectsPage refreshStats={fetchStats} />
+          )}
+
+          {/* ✅ RENDER PUBLICATION PAGE */}
+          {activeTab === "publications" && (
+            <PublicationPage refreshStats={fetchStats} />
           )}
 
         </div>

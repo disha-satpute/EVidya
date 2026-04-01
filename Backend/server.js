@@ -11,6 +11,9 @@ const facultyRoutes = require("./routes/facultyRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
 const projecroutes = require("./routes/projectRoutes");
 const leaderboardRoutes = require("./routes/LeaderboardRoutes");
+const publicationRoutes = require("./routes/publicationRoutes");
+
+
 
 
 const app = express();
@@ -25,6 +28,7 @@ app.use("/api/faculty", facultyRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/projects", projecroutes);
+app.use("/api/publications", publicationRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 
 app.get("/", (req, res) => {
