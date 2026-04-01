@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FacultyCertificates from "./facultyCertificates";
 import FacultyActivities from "./facultyActivities";
+import FacultyProjects from "./facultyProjects";
 import "../styles/FacultyDashboard.css";
 
 export default function FacultyDashboard() {
@@ -15,6 +16,7 @@ export default function FacultyDashboard() {
   const [stats, setStats] = useState({
     pendingCertificates: 0,
     pendingActivities: 0,
+    pendingProjects: 0,
     approvedThisMonth: 0,
     totalStudents: 0
   });
@@ -99,9 +101,10 @@ export default function FacultyDashboard() {
           <p>{stats.pendingActivities}</p>
         </div>
 
+        
         <div className="stat-card">
-          <h3>Approved This Month</h3>
-          <p>{stats.approvedThisMonth}</p>
+          <h3>Pending Projects</h3>
+          <p>{stats.pendingProjects}</p>
         </div>
 
         <div className="stat-card">
@@ -129,6 +132,13 @@ export default function FacultyDashboard() {
           Activities
         </button>
 
+        <button
+          className={`faculty-tab ${activeTab === "projects" ? "faculty-active" : ""}`}
+          onClick={() => setActiveTab("projects")}
+        >
+          Projects
+        </button>
+
       </div>
 
 
@@ -136,6 +146,7 @@ export default function FacultyDashboard() {
 
       {activeTab === "certificates" && <FacultyCertificates />}
       {activeTab === "activities" && <FacultyActivities />}
+      {activeTab === "projects" && <FacultyProjects />}
 
     </div>
   );

@@ -101,6 +101,10 @@ exports.getDashboardStats = async (req, res) => {
       "SELECT COUNT(*) FROM activities WHERE status='Pending'"
     );
 
+      const pendingProjects = await pool.query(
+      "SELECT COUNT(*) FROM projects WHERE status='Pending'"
+    );
+
     const approvedThisMonth = await pool.query(`
       SELECT COUNT(*)
       FROM certificates
@@ -115,6 +119,7 @@ exports.getDashboardStats = async (req, res) => {
     res.json({
       pendingCertificates: pendingCertificates.rows[0].count,
       pendingActivities: pendingActivities.rows[0].count,
+      pendingProjects: pendingProjects.rows[0].count,
       approvedThisMonth: approvedThisMonth.rows[0].count,
       totalStudents: totalStudents.rows[0].count
     });

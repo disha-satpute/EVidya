@@ -3,7 +3,9 @@ const router = express.Router();
 
 const {
 addProject,
-getStudentProjects
+getStudentProjects,
+getAllProjects,
+updateProjectStatus
 } = require("../controllers/projectController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -23,4 +25,15 @@ authMiddleware,
 getStudentProjects
 );
 
+router.get(
+"/all",
+authMiddleware,
+getAllProjects
+);
+
+router.put(
+    "/status/:id", 
+    authMiddleware, 
+    updateProjectStatus
+);
 module.exports = router;

@@ -153,3 +153,5 @@ screenshot TEXT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
+
+ALTER TABLE projects ADD COLUMN status VARCHAR(20) DEFAULT 'Pending';
