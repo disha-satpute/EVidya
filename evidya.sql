@@ -82,37 +82,29 @@ CREATE TABLE certificates (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+--activity table 
+
 CREATE TABLE activities (
-
 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-
-student_id UUID REFERENCES students(id) ON DELETE CASCADE,
-
+student_id UUID REFERENCES students(id) ON DELETE CASCADE, 
 activity_title VARCHAR(200) NOT NULL,
-
 activity_type VARCHAR(100) NOT NULL,
-
 organization VARCHAR(200) NOT NULL,
-
 activity_date DATE NOT NULL,
-
 description TEXT,
-
 proof_file TEXT,
-
 status VARCHAR(20) DEFAULT 'Pending',
-
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
 );
 
+--alter table certificates to add new columns for level and points
 ALTER TABLE certificates ADD COLUMN level VARCHAR(30);
 ALTER TABLE certificates ADD COLUMN points INTEGER DEFAULT 0;
 
 ALTER TABLE activities ADD COLUMN points INTEGER DEFAULT 0;
 
-ALTER TABLE students
-ADD COLUMN total_points INTEGER DEFAULT 0;
+--alter table students to add new columns for profile information and total points
+ALTER TABLE students ADD COLUMN total_points INTEGER DEFAULT 0;
 
 ALTER TABLE students
 ADD COLUMN prn VARCHAR(50),
@@ -122,6 +114,8 @@ ADD COLUMN cgpa DECIMAL(3,2),
 ADD COLUMN github_link TEXT,
 ADD COLUMN linkedin_link TEXT;
 
+
+--create projects table
 CREATE TABLE projects (
 
 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -154,9 +148,11 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
 
+--alter table projects to add status column
 ALTER TABLE projects ADD COLUMN status VARCHAR(20) DEFAULT 'Pending';
 
 
+--create publications table
 CREATE TABLE publications (
 
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
