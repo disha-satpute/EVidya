@@ -1,0 +1,315 @@
+/* ========== PROJECTS GAMIFIED UI ========== */
+
+/* Section Card */
+.activities-section {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+  margin-top: 25px;
+}
+
+.activities-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #0f172a;
+}
+
+/* ===== FORM GRID ===== */
+.cert-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 35px;
+}
+
+/* Inputs, select, textarea */
+.cert-form input,
+.cert-form select,
+.cert-form textarea {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.cert-form textarea {
+  resize: none;
+  height: 90px;
+  grid-column: span 3;
+}
+
+/* Focus effect */
+.cert-form input:focus,
+.cert-form select:focus,
+.cert-form textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* File input wider */
+.cert-form input[type="file"] {
+  grid-column: span 2;
+  background: #ffffff;
+  padding: 10px;
+}
+
+/* Submit Button */
+.cert-form button {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  font-weight: 1200;
+  cursor: pointer;
+  transition: 0.3s ease;
+  height: 40px;
+}
+
+.cert-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+}
+
+/* ===== PROJECT CARDS ===== */
+
+.activity-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f9fafb;
+  border: 1px solid #e2e8f0;
+  border-left: 6px solid #4f46e5;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  transition: 0.25s ease;
+  position: relative;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+.activity-card h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+/* Tech + Category */
+.activity-card p {
+  margin: 5px 0;
+  color: #475569;
+  font-size: 13px;
+}
+
+.activity-card .time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ===== LINKS ===== */
+
+.project-links {
+  margin-top: 8px;
+}
+
+.project-links a {
+  display: inline-block;
+  margin-right: 12px;
+  margin-top: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  background: #eef2ff;
+  color: #4338ca;
+  transition: 0.25s;
+}
+
+.project-links a:hover {
+  background: #6366f1;
+  color: white;
+}
+
+/* ===== STATUS BADGES ===== */
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+/* Pending */
+.status.pending {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+/* Approved */
+.status.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Rejected */
+.status.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 992px) {
+  .cert-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cert-form textarea {
+    grid-column: span 2;
+  }
+
+  .cert-form input[type="file"] {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .cert-form {
+    grid-template-columns: 1fr;
+  }
+
+  .cert-form textarea,
+  .cert-form input[type="file"] {
+    grid-column: span 1;
+  }
+}
+.date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+/* ===== CARD ACTION BUTTONS (Edit / Delete) ===== */
+
+.card-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.card-actions button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+/* Edit button */
+.card-actions .edit {
+  background: #22c55e;
+  color: white;
+}
+
+
+
+/* Delete button */
+.card-actions .delete {
+  background: #ef4444;
+  color: white;
+}
+
+
+
+
+/* ===== INLINE EDIT FORM ===== */
+
+.edit-form {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.edit-form input,
+.edit-form select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 13px;
+  transition: 0.25s ease;
+}
+
+.edit-form input:focus,
+.edit-form select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Save button */
+.edit-form button {
+  grid-column: span 2;
+  margin-top: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.edit-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+}
+
+
+/* ===== FIX CARD LAYOUT DURING EDIT ===== */
+
+.activity-card {
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* ===== RESPONSIVE FOR EDIT FORM ===== */
+
+@media (max-width: 768px) {
+  .edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-form button {
+    grid-column: span 1;
+  }
+}

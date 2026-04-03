@@ -1,0 +1,199 @@
+/* ========== PROFILE PAGE STYLING ========== */
+
+.profile-container {
+  background: #ffffff;
+  padding: 35px 40px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  margin-top: 25px;
+}
+
+/* Title */
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #1e293b;
+}
+
+/* Grid layout */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Inputs */
+.profile-grid input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #dbeafe;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+/* Disabled email style */
+.profile-grid input:disabled {
+  background: #e2e8f0;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Focus effect */
+.profile-grid input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* GitHub + LinkedIn full width */
+.profile-grid input[name="github_link"],
+.profile-grid input[name="linkedin_link"] {
+  grid-column: span 3;
+}
+
+/* Save button */
+.profile-save {
+  margin-top: 30px;
+  padding: 14px 30px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25);
+}
+
+.profile-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-grid input[name="github_link"],
+  .profile-grid input[name="linkedin_link"] {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-grid input[name="github_link"],
+  .profile-grid input[name="linkedin_link"] {
+    grid-column: span 1;
+  }
+}
+
+
+
+
+
+/* Header with buttons */
+.profile-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+/* Action buttons */
+.profile-actions{
+  display:flex;
+  gap:10px;
+}
+
+.edit-btn{
+  padding:8px 16px;
+  border-radius:8px;
+  border:none;
+  background:#22c55e;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.delete-btn{
+  padding:8px 16px;
+  border-radius:8px;
+  border:none;
+  background:#ef4444;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* Style select same as input */
+.profile-grid select{
+  width:100%;
+  padding:14px 16px;
+  border-radius:10px;
+  border:1px solid #dbeafe;
+  background:#f8fafc;
+  font-size:14px;
+  transition: all 0.25s ease;
+  box-sizing:border-box;
+}
+
+.profile-grid select:focus{
+  outline:none;
+  border-color:#6366f1;
+  background:#ffffff;
+  box-shadow:0 0 0 3px rgba(99,102,241,0.15);
+}
+
+.profile-grid select:disabled{
+  background:#e2e8f0;
+  color:#475569;
+  font-weight:500;
+}
+
+.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.file-input-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.file-input-row input[type="file"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #555;
+}
