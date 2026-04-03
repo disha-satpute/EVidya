@@ -1,0 +1,174 @@
+/* ================= PAGE ================= */
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3c1e4, #e3c1e4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ================= BACKGROUND ORBS ================= */
+.bg-orb {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.orb-left {
+  background:#b186b1;
+  top: 10%;
+  left: 12%;
+}
+
+.orb-right {
+  background:#b186b1;
+  bottom: 12%;
+  right: 12%;
+}
+
+/* ================= CONTAINER ================= */
+.register-container {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  padding: 60px;
+  max-width: 950px;
+  width: 100%;
+  text-align: center;
+  color: #1e1b4b;
+  z-index: 2;
+  box-shadow: 0 35px 70px rgba(124, 58, 237, 0.25);
+}
+
+.register-container h1 {
+  font-size: 36px;
+  font-weight: 800;
+  color: #4c1d95;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* ================= ROLE SECTION ================= */
+.role-wrapper {
+  margin-top: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+/* ================= ROLE CARDS ================= */
+.role-card {
+  width: 300px;
+  padding: 36px 30px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+/* STUDENT */
+.student {
+  background: linear-gradient(135deg, #ede9fe, #f5f3ff);
+  border: 2px solid #a78bfa;
+}
+
+/* FACULTY */
+.faculty {
+  background: linear-gradient(135deg, #f3e8ff, #faf5ff);
+  border: 2px solid #c084fc;
+}
+
+.role-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 45px rgba(124, 58, 237, 0.25);
+}
+
+.role-card h2 {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #312e81;
+}
+
+.role-card p {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 14px 0;
+  line-height: 1.6;
+}
+
+.role-card .icon {
+  font-size: 46px;
+}
+
+/* ================= TAG BUTTON ================= */
+.role-card .tag {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px 26px;
+  border-radius: 999px;
+  cursor: default;
+  background: linear-gradient(270deg, #7c3aed, #6366f1, #8b5cf6, #9333ea);
+  background-size: 800% 800%;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.45);
+  animation: gradientAnimation 7s ease infinite;
+}
+
+/* Hover effect */
+.role-card .tag:hover {
+  transform: scale(1.1) rotate(-2deg);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
+}
+
+/* Gradient Animation */
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ================= CONNECTOR ================= */
+.connector {
+  width: 70px;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  border-radius: 10px;
+}
+
+/* ================= FOOTER ================= */
+.footer-note {
+  margin-top: 35px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .role-wrapper {
+    flex-direction: column;
+  }
+
+  .connector {
+    width: 4px;
+    height: 50px;
+  }
+
+  .register-container {
+    padding: 40px 25px;
+  }
+}
