@@ -190,22 +190,37 @@ const updateActivity = async (req, res) => {
 
     const { id } = req.params;
 
-    const { title, activity_type, activity_date, description } = req.body;
+    const {
+      activity_title,
+      activity_type,
+      organization,
+      activity_date,
+      description
+    } = req.body;
 
     const filePath = req.file ? req.file.path : null;
 
     const result = await db.query(
       `UPDATE activities
        SET
-         title=$1,
+         activity_title=$1,
          activity_type=$2,
-         activity_date=$3,
-         description=$4,
-         file_path = COALESCE($5, file_path),
+         organization=$3,
+         activity_date=$4,
+         description=$5,
+         proof_file = COALESCE($6, proof_file),
          status='Pending'
-       WHERE id=$6
+       WHERE id=$7
        RETURNING *`,
-      [title, activity_type, activity_date, description, filePath, id]
+      [
+        activity_title,
+        activity_type,
+        organization,
+        activity_date,
+        description,
+        filePath,
+        id
+      ]
     );
 
     res.json(result.rows[0]);
@@ -215,6 +230,7 @@ const updateActivity = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 /* ================= DELETE ACTIVITY ================= */

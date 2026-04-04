@@ -123,23 +123,36 @@ const [editProject, setEditProject] = useState({});
 
 const handleEditSave = async (id) => {
   try {
-    await axios.put(
-      `http://localhost:5000/api/projects/${id}`,
-      editProject,
+
+    const formData = new FormData();
+
+    Object.keys(editProject).forEach((key) => {
+      if (editProject[key]) {
+        formData.append(key, editProject[key]);
+      }
+    });
+
+    const res = await axios.put(
+      `http://localhost:5000/api/projects/update/${id}`,   // ✅ FIXED
+      formData,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data"
         }
       }
     );
 
-    setProjects(projects.map(p => p.id === id ? {...p, ...editProject} : p));
+    setProjects(projects.map(p => p.id === id ? res.data : p));
     setEditingId(null);
-    toast.success("Project updated");
+
+    toast.success("Updated → Sent for approval 🚀");
+
   } catch (err) {
     toast.error("Update failed");
   }
 };
+
 
   return (
     <div className="activities-section">

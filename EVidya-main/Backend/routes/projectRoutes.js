@@ -5,7 +5,9 @@ const {
 addProject,
 getStudentProjects,
 getAllProjects,
-updateProjectStatus
+updateProjectStatus,
+updateProject,
+deleteProject
 } = require("../controllers/projectController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -36,4 +38,19 @@ router.put(
     authMiddleware, 
     updateProjectStatus
 );
+/* UPDATE PROJECT */
+router.put(
+  "/update/:id",
+  authMiddleware,
+  upload.single("screenshot"),
+  updateProject
+);
+
+/* DELETE PROJECT */
+router.delete(
+  "/:id",
+  authMiddleware,
+  deleteProject
+);
+
 module.exports = router;

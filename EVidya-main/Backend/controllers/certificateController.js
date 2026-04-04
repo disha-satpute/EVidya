@@ -176,6 +176,7 @@ const rejectCertificate = async (req, res) => {
 
   }
 };
+
 const updateCertificate = async (req, res) => {
   try {
 

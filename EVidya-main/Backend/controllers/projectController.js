@@ -167,3 +167,119 @@ exports.updateProjectStatus = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.updateProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 🔥 Get existing project
+    const existing = await db.query(
+      "SELECT * FROM projects WHERE id=$1",
+      [id]
+    );
+
+    const project = existing.rows[0];
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    const {
+      project_title,
+      description,
+      technologies,
+      category,
+      project_level,
+      start_date,
+      end_date,
+      github_link,
+      demo_link,
+      video_link
+    } = req.body;
+
+    const screenshot = req.file ? req.file.path : null;
+
+    // 🔥 If already approved → remove old points
+    if (project.status === "Approved") {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [project.points || 0, project.student_id]
+      );
+    }
+
+    // 🔥 Update project + reset status
+    const result = await db.query(
+      `UPDATE projects SET
+        project_title=$1,
+        description=$2,
+        technologies=$3,
+        category=$4,
+        project_level=$5,
+        start_date=$6,
+        end_date=$7,
+        github_link=$8,
+        demo_link=$9,
+        video_link=$10,
+        screenshot = COALESCE($11, screenshot),
+        status='Pending',
+        points = 0
+      WHERE id=$12
+      RETURNING *`,
+      [
+        project_title,
+        description,
+        technologies,
+        category,
+        project_level,
+        start_date,
+        end_date,
+        github_link,
+        demo_link,
+        video_link,
+        screenshot,
+        id
+      ]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error("Update Project Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deleteProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 🔥 Get project first
+    const projectData = await db.query(
+      "SELECT * FROM projects WHERE id=$1",
+      [id]
+    );
+
+    const project = projectData.rows[0];
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // 🔥 If approved → subtract points
+    if (project.status === "Approved") {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [project.points || 0, project.student_id]
+      );
+    }
+
+    // 🔥 Delete project
+    await db.query("DELETE FROM projects WHERE id=$1", [id]);
+
+    res.json({ message: "Project deleted successfully" });
+
+  } catch (err) {
+    console.error("Delete Project Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -104,7 +104,9 @@ const [editProject, setEditProject] = useState({});
 // ===== DELETE ACTIVITY =====
 const handleDelete = async (id) => {
   try {
-    await axios.delete(`http://localhost:5000/api/activities/delete/${id}`, {
+    await axios.delete(
+  `http://localhost:5000/api/activities/${id}`,   // ✅ FIXED`, 
+  {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -120,23 +122,42 @@ const handleDelete = async (id) => {
 // ===== SAVE EDITED ACTIVITY =====
 const handleEditSave = async (id) => {
   try {
+
+    const formData = new FormData();
+
+    formData.append("activity_title", editProject.activity_title);
+    formData.append("activity_type", editProject.activity_type);
+    formData.append("organization", editProject.organization);
+    formData.append("activity_date", editProject.activity_date);
+    formData.append("description", editProject.description || "");
+
+    // if file updated
+    if (editProject.proof_file instanceof File) {
+      formData.append("proof_file", editProject.proof_file);
+    }
+
     await axios.put(
       `http://localhost:5000/api/activities/update/${id}`,
-      editProject,
+      formData,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data"
         },
       }
     );
 
     setEditingId(null);
     fetchActivities();
-    toast.success("Activity updated");
+
+    toast.success("Updated → Sent for approval");
+
   } catch (err) {
+    console.error(err);
     toast.error("Update failed");
   }
 };
+
   return (
     <div className="activities-section">
 
