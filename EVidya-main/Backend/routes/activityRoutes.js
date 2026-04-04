@@ -4,6 +4,7 @@ const router = express.Router();
 const activityController = require("../controllers/activityController");
 const authMiddleware = require("../middleware/authMiddleware");
 const uploadActivity = require("../middleware/uploadMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 
 router.post(
@@ -40,5 +41,18 @@ router.put(
   authMiddleware,
   activityController.rejectActivity
 );
+/* UPDATE */
+router.put(
+  "/update/:id",
+  authMiddleware,
+  upload.single("file"),
+  activityController.updateActivity
+);
 
+/* DELETE */
+router.delete(
+  "/:id",
+  authMiddleware,
+  activityController.deleteActivity
+);
 module.exports = router;

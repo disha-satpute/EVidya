@@ -90,43 +90,39 @@ exports.loginStudent = async (req, res) => {
   }
 };
 exports.getStudentProfile = async (req, res) => {
-
   try {
 
     const studentId = req.user.id;
 
     const result = await pool.query(
-
       `SELECT 
-      full_name,
-      email,
-      prn,
-      branch,
-      year,
-      cgpa,
-      github_link,
-      linkedin_link,
-      total_points
+        full_name,
+        email,
+        prn,
+        branch,
+        year,
+        cgpa,
+        institute_name,
+        division,
+        github_link,
+        linkedin_link,
+        id_card,
+        total_points
       FROM students
       WHERE id=$1`,
-
       [studentId]
-
     );
 
     res.json(result.rows[0]);
 
   } catch (err) {
-
     console.error(err);
     res.status(500).json({ message: "Server error" });
-
   }
-
 };
 
-exports.updateStudentProfile = async (req, res) => {
 
+exports.updateStudentProfile = async (req, res) => {
   try {
 
     const studentId = req.user.id;
@@ -137,35 +133,54 @@ exports.updateStudentProfile = async (req, res) => {
       branch,
       year,
       cgpa,
+      institute_name,
+      division,
       github_link,
       linkedin_link
     } = req.body;
 
-    const result = await pool.query(
+    let idCardPath = null;
 
+    // ✅ If file uploaded
+    if (req.file) {
+      idCardPath = req.file.path;
+    }
+
+    const result = await pool.query(
       `UPDATE students
        SET
-       full_name=$1,
-       prn=$2,
-       branch=$3,
-       year=$4,
-       cgpa=$5,
-       github_link=$6,
-       linkedin_link=$7
-       WHERE id=$8
+         full_name=$1,
+         prn=$2,
+         branch=$3,
+         year=$4,
+         cgpa=$5,
+         institute_name=$6,
+         division=$7,
+         github_link=$8,
+         linkedin_link=$9,
+         id_card = COALESCE($10, id_card),
+         updated_at = CURRENT_TIMESTAMP
+       WHERE id=$11
        RETURNING *`,
-
-      [full_name, prn, branch, year, cgpa, github_link, linkedin_link, studentId]
-
+      [
+        full_name,
+        prn,
+        branch,
+        year,
+        cgpa,
+        institute_name,
+        division,
+        github_link,
+        linkedin_link,
+        idCardPath,
+        studentId
+      ]
     );
 
     res.json(result.rows[0]);
 
   } catch (err) {
-
     console.error(err);
     res.status(500).json({ message: "Server error" });
-
   }
-
 };

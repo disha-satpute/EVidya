@@ -126,23 +126,44 @@ const handleDelete = async (id) => {
 
 const handleEditSave = async (id) => {
   try {
-    await axios.put(
-      `http://localhost:5000/api/certificates/${id}`,
-      editCert,
+
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+
+    formData.append("certificate_name", editCert.certificate_name);
+    formData.append("organization", editCert.organization);
+    formData.append("issue_date", editCert.issue_date);
+    formData.append("description", editCert.description || "");
+    formData.append("level", editCert.level || "");
+
+    const res = await axios.put(
+      `http://localhost:5000/api/certificates/update/${id}`,
+      formData,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
         }
       }
     );
 
-    setCertificates(certificates.map(c => c.id === id ? {...c, ...editCert} : c));
+    // 🔥 IMPORTANT: replace updated certificate from backend
+    setCertificates(
+      certificates.map(c => c.id === id ? res.data : c)
+    );
+
     setEditingId(null);
-    toast.success("Certificate updated");
+
+    toast.success("Updated → Sent for approval");
+
   } catch (err) {
+    console.error(err);
     toast.error("Update failed");
   }
 };
+
+
   return (
     
     <div className="activities-section">
@@ -241,7 +262,7 @@ const handleEditSave = async (id) => {
 
         <input
           type="date"
-          value={editCert.issue_date?.split("T")[0]}
+value={editCert.issue_date ? editCert.issue_date.split("T")[0] : ""}
           onChange={(e)=>setEditCert({...editCert, issue_date:e.target.value})}
         />
 

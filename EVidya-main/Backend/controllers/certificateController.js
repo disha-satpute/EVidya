@@ -176,6 +176,80 @@ const rejectCertificate = async (req, res) => {
 
   }
 };
+const updateCertificate = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const {
+      certificate_name,
+      organization,
+      issue_date,
+      level,
+      description
+    } = req.body;
+
+    const filePath = req.file ? req.file.path : null;
+
+    const result = await db.query(
+      `UPDATE certificates
+       SET
+         certificate_name = $1,
+         organization = $2,
+         issue_date = $3,
+         level = $4,
+         description = $5,
+         file_path = COALESCE($6, file_path),
+         status = 'Pending'   -- 🔥 IMPORTANT
+       WHERE id = $7
+       RETURNING *`,
+      [
+        certificate_name,
+        organization,
+        issue_date,
+        level,
+        description,
+        filePath,
+        id
+      ]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteCertificate = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const studentId = req.user.id;
+
+    // 🔐 ensure student deletes only their own certificate
+    const cert = await db.query(
+      "SELECT * FROM certificates WHERE id=$1 AND student_id=$2",
+      [id, studentId]
+    );
+
+    if (cert.rows.length === 0) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    await db.query(
+      "DELETE FROM certificates WHERE id=$1",
+      [id]
+    );
+
+    res.json({ message: "Certificate deleted successfully" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 
 module.exports = {
@@ -183,5 +257,7 @@ module.exports = {
   getStudentCertificates,
   getAllCertificates,
   approveCertificate,
-  rejectCertificate
+  rejectCertificate,
+  updateCertificate,
+  deleteCertificate
 };

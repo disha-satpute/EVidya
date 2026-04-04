@@ -15,6 +15,11 @@ const storage = multer.diskStorage({
       cb(null, "uploads/activities");
     }
 
+    // ✅ NEW: ID CARD upload
+    else if (req.originalUrl.includes("students")) {
+      cb(null, "uploads/id_cards");
+    }
+
     // fallback
     else {
       cb(null, "uploads");

@@ -40,6 +40,17 @@ router.put(
   authMiddleware,
   certificateController.rejectCertificate
 );
+router.put(
+  "/update/:id",
+  authMiddleware,
+  upload.single("certificate"),
+  certificateController.updateCertificate
+);
+router.delete(
+  "/:id",
+  authMiddleware,
+  certificateController.deleteCertificate
+);
 
 
 module.exports = router;

@@ -31,6 +31,8 @@ CREATE TABLE students (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+--alter table students to add new columns for profile information and total points
+ALTER TABLE students ADD COLUMN total_points INTEGER DEFAULT 0;
 
 --Create FACULTY Table
 CREATE TABLE faculty (
@@ -103,8 +105,6 @@ ALTER TABLE certificates ADD COLUMN points INTEGER DEFAULT 0;
 
 ALTER TABLE activities ADD COLUMN points INTEGER DEFAULT 0;
 
---alter table students to add new columns for profile information and total points
-ALTER TABLE students ADD COLUMN total_points INTEGER DEFAULT 0;
 
 ALTER TABLE students
 ADD COLUMN prn VARCHAR(50),

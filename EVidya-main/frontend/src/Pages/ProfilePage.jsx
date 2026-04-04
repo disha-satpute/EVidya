@@ -6,270 +6,223 @@ import "../styles/student_profile.css";
 
 export default function ProfilePage({ refreshProfile, refreshStats }) {
 
-const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [profile,setProfile] = useState({
-full_name:"",
-email:"",
-prn:"",
-branch:"",
-year:"",
-cgpa:"",
-github_link:"",
-linkedin_link:""
-});
+  const [profile, setProfile] = useState({
+    full_name: "",
+    email: "",
+    prn: "",
+    branch: "",
+    year: "",
+    cgpa: "",
+    institute_name: "",
+    division: "",
+    github_link: "",
+    linkedin_link: "",
+    id_card: ""
+  });
 
-/* ✅ NEW STATE FOR FILE */
-const [idCard, setIdCard] = useState(null);
+  const [idCard, setIdCard] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-const [isEditing, setIsEditing] = useState(false);
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
-useEffect(()=>{
-fetchProfile();
-},[]);
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-const fetchProfile = async ()=>{
+      const res = await axios.get(
+        "http://localhost:5000/api/students/profile",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-try{
+      setProfile(res.data);
 
-const token = localStorage.getItem("token");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-const res = await axios.get(
-"http://localhost:5000/api/students/profile",
-{headers:{Authorization:`Bearer ${token}`}}
-);
+  const handleChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
 
-setProfile(res.data);
+  const handleSave = async () => {
+    try {
 
-}catch(err){
-console.error(err);
-}
+      setLoading(true);
 
-};
+      const token = localStorage.getItem("token");
 
-const handleChange = (e)=>{
-setProfile({...profile,[e.target.name]:e.target.value});
-};
+      const formData = new FormData();
 
-const handleSave = async () => {
-
-try{
-
-setLoading(true);
-
-const token = localStorage.getItem("token");
-
-/* ✅ USE FORMDATA */
-const formData = new FormData();
-
-/* append profile fields */
-Object.keys(profile).forEach((key)=>{
-  formData.append(key, profile[key]);
-});
-
-/* append file */
-if(idCard){
-  formData.append("id_card", idCard);
-}
-
-await axios.put(
-"http://localhost:5000/api/students/profile",
-formData,
-{
-headers:{
-Authorization:`Bearer ${token}`,
-"Content-Type":"multipart/form-data"
-}
-}
-);
-
-toast.success("Profile updated successfully 🎉");
-
-/* REFRESH FORM DATA */
-fetchProfile();
-
-/* REFRESH DASHBOARD DATA */
-if(refreshProfile) refreshProfile();
-if(refreshStats) refreshStats();
-
-setIsEditing(false);
-
-}catch(err){
-
-toast.error("Update failed");
-
-}finally{
-
-setLoading(false);
-
-}
-
-};
-
-return (
-
-<div className="profile-container">
-
-<ToastContainer position="top-right" autoClose={3000}/>
-
-<div className="profile-header">
-  <h2 className="profile-title">Student Profile</h2>
-
-  <div className="profile-actions">
-    <button className="edit-btn" onClick={()=>setIsEditing(true)}>Edit</button>
-    <button className="delete-btn" onClick={()=>setProfile({
-      full_name:"",
-      email:profile.email,
-      prn:"",
-      branch:"",
-      year:"",
-      cgpa:"",
-      github_link:"",
-      linkedin_link:""
-    })}>Delete</button>
-  </div>
-</div>
-
-<div className="profile-grid">
-
-<input
-name="full_name"
-value={profile.full_name || ""}
-onChange={handleChange}
-placeholder="Full Name"
-disabled={!isEditing}
-/>
-
-<input
-name="email"
-value={profile.email || ""}
-disabled
-/>
-
-<input
-name="prn"
-value={profile.prn || ""}
-onChange={handleChange}
-placeholder="PRN"
-disabled={!isEditing}
-/>
-
-<input
-name="cgpa"
-value={profile.cgpa || ""}
-onChange={handleChange}
-placeholder="Current CGPA"
-disabled={!isEditing}
-/>
-
-<input
-name="Institute_Name"
-value={profile.Institute_Name || ""}
-onChange={handleChange}
-placeholder="Institute Name"
-disabled={!isEditing}
-/>
-
-<select
-name="year"
-value={profile.year || ""}
-onChange={handleChange}
-disabled={!isEditing}
->
-  <option value="">Select Year</option>
-  <option>First Year</option>
-  <option>Second Year</option>
-  <option>Third Year</option>
-  <option>Fourth Year</option>
-</select>
-
-<select
-name="branch"
-value={profile.branch || ""}
-onChange={handleChange}
-disabled={!isEditing}
->
-  <option value="">Select Branch / Course</option>
-  <option>Computer Engineering</option>
-  <option>Information Technology</option>
-  <option>Software Engineering</option>
-  <option>AIDS Engineering</option>
-  <option>Mechanical Engineering</option>
-  <option>Civil Engineering</option>
-  <option>Electronics Engineering</option>
-  <option>Electrical Engineering</option>
-  <option>Chemical Engineering</option>
-</select>
-
-<input
-name="Division"
-value={profile.Division || ""}
-onChange={handleChange}
-placeholder="Division"
-disabled={!isEditing}
-/>
-
-<input
-name="github_link"
-value={profile.github_link || ""}
-onChange={handleChange}
-placeholder="GitHub Link"
-disabled={!isEditing}
-/>
-
-<input
-name="linkedin_link"
-value={profile.linkedin_link || ""}
-onChange={handleChange}
-placeholder="LinkedIn Link"
-disabled={!isEditing}
-/>
-
-{/* ✅ NEW FILE INPUT */}
-<div className="file-upload-wrapper">
-  <label className="file-label">Upload College ID Card</label>
-
-  <div className="file-input-row">
-    <input
-      type="file"
-      id="idCardUpload"
-      accept=".png,.jpg,.jpeg,.pdf"
-      onChange={(e)=>{
-        const file = e.target.files[0];
-
-        if(file){
-          const allowedTypes = [
-            "image/png",
-            "image/jpeg",
-            "application/pdf"
-          ];
-
-          if(!allowedTypes.includes(file.type)){
-            toast.error("Only PNG, JPG, JPEG, PDF files are allowed");
-            return;
-          }
-
-          setIdCard(file);
+      Object.keys(profile).forEach((key) => {
+        if (profile[key]) {
+          formData.append(key, profile[key]);
         }
-      }}
-      disabled={!isEditing}
-    />
+      });
 
-    
-  </div>
-</div>
+      if (idCard) {
+        formData.append("id_card", idCard);
+      }
 
-</div>
+      await axios.put(
+        "http://localhost:5000/api/students/profile",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+            // ❌ DO NOT SET CONTENT TYPE
+          }
+        }
+      );
 
-<button
-className="profile-save"
-onClick={handleSave}
-disabled={loading || !isEditing}
->
-{loading ? "Updating..." : "Update Profile"}
-</button>
+      toast.success("Profile updated successfully 🎉");
 
-</div>
-);
+      await fetchProfile(); // ✅ IMPORTANT
 
+      if (refreshProfile) refreshProfile();
+      if (refreshStats) refreshStats();
+
+      setIsEditing(false);
+
+    } catch (err) {
+      toast.error("Update failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="profile-container">
+
+      <ToastContainer position="top-right" autoClose={3000} />
+
+      <div className="profile-header">
+        <h2 className="profile-title">Student Profile</h2>
+
+        <div className="profile-actions">
+          <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+        </div>
+      </div>
+
+      <div className="profile-grid">
+
+        <input
+          name="full_name"
+          value={profile.full_name || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+
+        <input
+          name="email"
+          value={profile.email || ""}
+          disabled
+        />
+
+        <input
+          name="prn"
+          value={profile.prn || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+
+        <input
+          name="cgpa"
+          value={profile.cgpa || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+
+        {/* ✅ FIXED NAME */}
+        <input
+          name="institute_name"
+          value={profile.institute_name || ""}
+          onChange={handleChange}
+          placeholder="Institute Name"
+          disabled={!isEditing}
+        />
+
+        <select
+          name="year"
+          value={profile.year || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        >
+          <option value="">Select Year</option>
+          <option>First Year</option>
+          <option>Second Year</option>
+          <option>Third Year</option>
+          <option>Fourth Year</option>
+        </select>
+
+        <select
+          name="branch"
+          value={profile.branch || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        >
+          <option value="">Select Branch</option>
+          <option>Computer Engineering</option>
+          <option>Information Technology</option>
+          <option>Software Engineering</option>
+        </select>
+
+        {/* ✅ FIXED NAME */}
+        <input
+          name="division"
+          value={profile.division || ""}
+          onChange={handleChange}
+          placeholder="Division"
+          disabled={!isEditing}
+        />
+
+        <input
+          name="github_link"
+          value={profile.github_link || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+
+        <input
+          name="linkedin_link"
+          value={profile.linkedin_link || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+
+        {/* FILE */}
+        <input
+          type="file"
+          accept=".png,.jpg,.jpeg,.pdf"
+          onChange={(e) => setIdCard(e.target.files[0])}
+          disabled={!isEditing}
+        />
+
+        {/* ✅ SHOW EXISTING FILE */}
+        {profile.id_card && (
+          <a
+            href={`http://localhost:5000/${profile.id_card}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            View Uploaded ID Card
+          </a>
+        )}
+
+      </div>
+
+      <button
+        className="profile-save"
+        onClick={handleSave}
+        disabled={loading || !isEditing}
+      >
+        {loading ? "Updating..." : "Update Profile"}
+      </button>
+
+    </div>
+  );
 }

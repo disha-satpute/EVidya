@@ -8,9 +8,17 @@ const {
 } = require("../controllers/studentController");
 
 const authMiddleware = require("../middleware/authMiddleware"); 
+const upload = require("../middleware/uploadMiddleware");
 
 router.post("/register", registerStudent);
 router.post("/login", loginStudent);
 router.get("/profile", authMiddleware, getStudentProfile);
-router.put("/profile", authMiddleware, updateStudentProfile);
+router.put(
+  "/profile",
+  authMiddleware,
+  upload.single("id_card"),   // 🚨 THIS LINE IS MUST
+  updateStudentProfile
+);
 module.exports = router;
+
+

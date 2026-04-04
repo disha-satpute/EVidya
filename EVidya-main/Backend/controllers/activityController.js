@@ -185,6 +185,64 @@ const rejectActivity = async (req, res) => {
   }
 
 };
+const updateActivity = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const { title, activity_type, activity_date, description } = req.body;
+
+    const filePath = req.file ? req.file.path : null;
+
+    const result = await db.query(
+      `UPDATE activities
+       SET
+         title=$1,
+         activity_type=$2,
+         activity_date=$3,
+         description=$4,
+         file_path = COALESCE($5, file_path),
+         status='Pending'
+       WHERE id=$6
+       RETURNING *`,
+      [title, activity_type, activity_date, description, filePath, id]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+/* ================= DELETE ACTIVITY ================= */
+const deleteActivity = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const studentId = req.user.id;
+
+    const check = await db.query(
+      "SELECT * FROM activities WHERE id=$1 AND student_id=$2",
+      [id, studentId]
+    );
+
+    if (check.rows.length === 0) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    await db.query("DELETE FROM activities WHERE id=$1", [id]);
+
+    res.json({ message: "Activity deleted" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 
 module.exports = {
@@ -192,5 +250,7 @@ module.exports = {
   getStudentActivities,
   getAllActivities,
   approveActivity,
-  rejectActivity
+  rejectActivity,
+  updateActivity,
+  deleteActivity
 };
