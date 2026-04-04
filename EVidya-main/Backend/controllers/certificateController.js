@@ -192,6 +192,27 @@ const updateCertificate = async (req, res) => {
 
     const filePath = req.file ? req.file.path : null;
 
+    // 🔥 1. Get existing certificate
+    const certData = await db.query(
+      "SELECT * FROM certificates WHERE id=$1",
+      [id]
+    );
+
+    const cert = certData.rows[0];
+
+    if (!cert) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    // 🔥 2. If already approved → remove points
+    if (cert.status === "Approved" && cert.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [cert.points, cert.student_id]
+      );
+    }
+
+    // 🔥 3. Update certificate and reset status
     const result = await db.query(
       `UPDATE certificates
        SET
@@ -201,7 +222,8 @@ const updateCertificate = async (req, res) => {
          level = $4,
          description = $5,
          file_path = COALESCE($6, file_path),
-         status = 'Pending'   -- 🔥 IMPORTANT
+         status = 'Pending',
+         points = 0   -- 🔥 reset points
        WHERE id = $7
        RETURNING *`,
       [
@@ -223,22 +245,34 @@ const updateCertificate = async (req, res) => {
   }
 };
 
+
 const deleteCertificate = async (req, res) => {
   try {
 
     const { id } = req.params;
     const studentId = req.user.id;
 
-    // 🔐 ensure student deletes only their own certificate
-    const cert = await db.query(
+    // 🔥 1. Get certificate
+    const certData = await db.query(
       "SELECT * FROM certificates WHERE id=$1 AND student_id=$2",
       [id, studentId]
     );
 
-    if (cert.rows.length === 0) {
+    const cert = certData.rows[0];
+
+    if (!cert) {
       return res.status(404).json({ message: "Certificate not found" });
     }
 
+    // 🔥 2. If approved → subtract points
+    if (cert.status === "Approved" && cert.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [cert.points, cert.student_id]
+      );
+    }
+
+    // 🔥 3. Delete certificate
     await db.query(
       "DELETE FROM certificates WHERE id=$1",
       [id]
