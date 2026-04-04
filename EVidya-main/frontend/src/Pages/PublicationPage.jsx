@@ -92,7 +92,7 @@ const [editPub, setEditPub] = useState({});
 // ===== DELETE =====
 const handleDelete = async (id) => {
   try {
-    await axios.delete(`http://localhost:5000/api/publications/delete/${id}`, {
+    await axios.delete(`http://localhost:5000/api/publications/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

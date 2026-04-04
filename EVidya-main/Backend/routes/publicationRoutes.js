@@ -5,7 +5,9 @@ const {
   addPublication,
   getStudentPublications,
   updatePublicationStatus,
-  getAllPublications
+  getAllPublications,
+  updatePublication,
+  deletePublication
 } = require("../controllers/publicationController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -21,5 +23,18 @@ router.get("/all", authMiddleware, getAllPublications);
 
 /* UPDATE STATUS */
 router.put("/status/:id", authMiddleware, updatePublicationStatus);
+/* UPDATE */
+router.put(
+  "/update/:id",
+  authMiddleware,
+  updatePublication
+);
+
+/* DELETE */
+router.delete(
+  "/:id",
+  authMiddleware,
+  deletePublication
+);
 
 module.exports = router;

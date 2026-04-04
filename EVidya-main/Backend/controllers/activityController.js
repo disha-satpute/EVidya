@@ -187,7 +187,6 @@ const rejectActivity = async (req, res) => {
 };
 const updateActivity = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     const {
@@ -200,6 +199,27 @@ const updateActivity = async (req, res) => {
 
     const filePath = req.file ? req.file.path : null;
 
+    // 🔥 Step 1: Get old activity
+    const old = await db.query(
+      "SELECT * FROM activities WHERE id=$1",
+      [id]
+    );
+
+    const activity = old.rows[0];
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // 🔥 Step 2: If already approved → subtract points
+    if (activity.status === "Approved" && activity.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [activity.points, activity.student_id]
+      );
+    }
+
+    // 🔥 Step 3: Update activity & reset status
     const result = await db.query(
       `UPDATE activities
        SET
@@ -209,7 +229,8 @@ const updateActivity = async (req, res) => {
          activity_date=$4,
          description=$5,
          proof_file = COALESCE($6, proof_file),
-         status='Pending'
+         status='Pending',
+         points = 0
        WHERE id=$7
        RETURNING *`,
       [
@@ -233,13 +254,14 @@ const updateActivity = async (req, res) => {
 
 
 
+
 /* ================= DELETE ACTIVITY ================= */
 const deleteActivity = async (req, res) => {
   try {
-
     const { id } = req.params;
     const studentId = req.user.id;
 
+    // 🔐 Check ownership
     const check = await db.query(
       "SELECT * FROM activities WHERE id=$1 AND student_id=$2",
       [id, studentId]
@@ -249,15 +271,30 @@ const deleteActivity = async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    await db.query("DELETE FROM activities WHERE id=$1", [id]);
+    const activity = check.rows[0];
 
-    res.json({ message: "Activity deleted" });
+    // 🔥 Step 1: If approved → subtract points
+    if (activity.status === "Approved" && activity.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [activity.points, activity.student_id]
+      );
+    }
+
+    // 🔥 Step 2: Delete activity
+    await db.query(
+      "DELETE FROM activities WHERE id=$1",
+      [id]
+    );
+
+    res.json({ message: "Activity deleted & points updated" });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 

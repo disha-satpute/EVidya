@@ -135,3 +135,186 @@ exports.getAllPublications = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.updatePublication = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const {
+      title,
+      publication_type,
+      journal_name,
+      publisher,
+      publication_date,
+      doi_link,
+      paper_link,
+      certificate_link
+    } = req.body;
+
+    // 🔥 1. Get old publication
+    const old = await db.query(
+      "SELECT * FROM publications WHERE id=$1",
+      [id]
+    );
+
+    const pub = old.rows[0];
+
+    if (!pub) {
+      return res.status(404).json({ message: "Publication not found" });
+    }
+
+    // 🔥 2. If approved → remove points
+    if (pub.status === "Approved" && pub.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [pub.points, pub.student_id]
+      );
+    }
+
+    // 🔥 3. Update publication
+    const result = await db.query(
+      `UPDATE publications
+       SET
+         title=$1,
+         publication_type=$2,
+         journal_name=$3,
+         publisher=$4,
+         publication_date=$5,
+         doi_link=$6,
+         paper_link=$7,
+         certificate_link=$8,
+         status='Pending',
+         points=0
+       WHERE id=$9
+       RETURNING *`,
+      [
+        title,
+        publication_type,
+        journal_name,
+        publisher,
+        publication_date,
+        doi_link,
+        paper_link,
+        certificate_link,
+        id
+      ]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.updatePublication = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const {
+      title,
+      publication_type,
+      journal_name,
+      publisher,
+      publication_date,
+      doi_link,
+      paper_link,
+      certificate_link
+    } = req.body;
+
+    // 🔥 1. Get old publication
+    const old = await db.query(
+      "SELECT * FROM publications WHERE id=$1",
+      [id]
+    );
+
+    const pub = old.rows[0];
+
+    if (!pub) {
+      return res.status(404).json({ message: "Publication not found" });
+    }
+
+    // 🔥 2. If approved → remove points
+    if (pub.status === "Approved" && pub.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [pub.points, pub.student_id]
+      );
+    }
+
+    // 🔥 3. Update publication
+    const result = await db.query(
+      `UPDATE publications
+       SET
+         title=$1,
+         publication_type=$2,
+         journal_name=$3,
+         publisher=$4,
+         publication_date=$5,
+         doi_link=$6,
+         paper_link=$7,
+         certificate_link=$8,
+         status='Pending',
+         points=0
+       WHERE id=$9
+       RETURNING *`,
+      [
+        title,
+        publication_type,
+        journal_name,
+        publisher,
+        publication_date,
+        doi_link,
+        paper_link,
+        certificate_link,
+        id
+      ]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.deletePublication = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const studentId = req.user.id;
+
+    // 🔐 check ownership
+    const check = await db.query(
+      "SELECT * FROM publications WHERE id=$1 AND student_id=$2",
+      [id, studentId]
+    );
+
+    if (check.rows.length === 0) {
+      return res.status(404).json({ message: "Publication not found" });
+    }
+
+    const pub = check.rows[0];
+
+    // 🔥 If approved → subtract points
+    if (pub.status === "Approved" && pub.points > 0) {
+      await db.query(
+        "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
+        [pub.points, pub.student_id]
+      );
+    }
+
+    // 🔥 delete
+    await db.query(
+      "DELETE FROM publications WHERE id=$1",
+      [id]
+    );
+
+    res.json({ message: "Publication deleted" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
