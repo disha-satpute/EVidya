@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 /* ================= ADD PROJECT ================= */
-exports.addProject = async (req, res) => {
+const addProject = async (req, res) => {
   try {
     const studentId = req.user.id;
 
@@ -39,7 +39,7 @@ exports.addProject = async (req, res) => {
         demo_link,
         video_link,
         screenshot,
-        "Pending"   // default status
+        "Pending"
       ]
     );
 
@@ -51,9 +51,8 @@ exports.addProject = async (req, res) => {
   }
 };
 
-
 /* ================= GET STUDENT PROJECTS ================= */
-exports.getStudentProjects = async (req, res) => {
+const getStudentProjects = async (req, res) => {
   try {
     const studentId = req.user.id;
 
@@ -65,35 +64,64 @@ exports.getStudentProjects = async (req, res) => {
     res.json(result.rows);
 
   } catch (err) {
-    console.error("Get Student Projects Error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
-/* ================= GET ALL PROJECTS (FACULTY) ================= */
-exports.getAllProjects = async (req, res) => {
+/* ================= GET ALL PROJECTS ================= */
+/* ================= GET PROJECTS (FACULTY FILTERED) ================= */
+const getAllProjects = async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT projects.*, students.full_name
-      FROM projects
-      JOIN students ON students.id = projects.student_id
-      ORDER BY projects.created_at DESC
-    `);
+
+    const facultyId = req.user.id;
+
+    // 🔥 1. Get faculty details
+    const facultyRes = await db.query(
+      "SELECT branch, year, division FROM faculty WHERE id=$1",
+      [facultyId]
+    );
+
+    const faculty = facultyRes.rows[0];
+
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    // 🔥 2. Get students under that faculty
+    const studentsRes = await db.query(
+      `SELECT id FROM students
+       WHERE branch=$1 AND year=$2 AND division=$3`,
+      [faculty.branch, faculty.year, faculty.division]
+    );
+
+    const studentIds = studentsRes.rows.map(s => s.id);
+
+    if (studentIds.length === 0) {
+      return res.json([]);
+    }
+
+    // 🔥 3. Get only THEIR projects
+    const result = await db.query(
+      `SELECT projects.*, students.full_name
+       FROM projects
+       JOIN students ON students.id = projects.student_id
+       WHERE projects.student_id = ANY($1)
+       ORDER BY projects.created_at DESC`,
+      [studentIds]
+    );
 
     res.json(result.rows);
 
   } catch (err) {
-    console.error("Get All Projects Error:", err);
+    console.error("Get Faculty Projects Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
-/* ================= UPDATE PROJECT STATUS ================= */
-exports.updateProjectStatus = async (req, res) => {
+/* ================= UPDATE STATUS ================= */
+const updateProjectStatus = async (req, res) => {
   try {
-
     const { id } = req.params;
     const { status } = req.body;
 
@@ -101,7 +129,6 @@ exports.updateProjectStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    // 1. Get project data
     const projectData = await db.query(
       "SELECT * FROM projects WHERE id=$1",
       [id]
@@ -113,43 +140,25 @@ exports.updateProjectStatus = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // 2. Prevent duplicate approval
     if (project.status === "Approved") {
       return res.json({ message: "Already approved" });
     }
 
     let points = 0;
 
-    // 3. Assign points based on project level
     switch (project.project_level) {
-
-      case "Academic":
-        points = 80;
-        break;
-
-      case "Personal":
-        points = 60;
-        break;
-
-      case "Internship":
-        points = 120;
-        break;
-
-      case "Open Source":
-        points = 150;
-        break;
-
-      default:
-        points = 50;
+      case "Academic": points = 80; break;
+      case "Personal": points = 60; break;
+      case "Internship": points = 120; break;
+      case "Open Source": points = 150; break;
+      default: points = 50;
     }
 
-    // 4. Update project status + points
     await db.query(
       "UPDATE projects SET status=$1, points=$2 WHERE id=$3",
       [status, status === "Approved" ? points : 0, id]
     );
 
-    // 5. Add points to student ONLY if approved
     if (status === "Approved") {
       await db.query(
         "UPDATE students SET total_points = total_points + $1 WHERE id=$2",
@@ -157,22 +166,19 @@ exports.updateProjectStatus = async (req, res) => {
       );
     }
 
-    res.json({
-      message: `Project ${status}`,
-      points: status === "Approved" ? points : 0
-    });
+    res.json({ message: `Project ${status}`, points });
 
   } catch (err) {
-    console.error("Update Status Error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.updateProject = async (req, res) => {
+/* ================= UPDATE PROJECT ================= */
+const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 🔥 Get existing project
     const existing = await db.query(
       "SELECT * FROM projects WHERE id=$1",
       [id]
@@ -199,7 +205,6 @@ exports.updateProject = async (req, res) => {
 
     const screenshot = req.file ? req.file.path : null;
 
-    // 🔥 If already approved → remove old points
     if (project.status === "Approved") {
       await db.query(
         "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
@@ -207,7 +212,6 @@ exports.updateProject = async (req, res) => {
       );
     }
 
-    // 🔥 Update project + reset status
     const result = await db.query(
       `UPDATE projects SET
         project_title=$1,
@@ -244,16 +248,16 @@ exports.updateProject = async (req, res) => {
     res.json(result.rows[0]);
 
   } catch (err) {
-    console.error("Update Project Error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.deleteProject = async (req, res) => {
+/* ================= DELETE ================= */
+const deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 🔥 Get project first
     const projectData = await db.query(
       "SELECT * FROM projects WHERE id=$1",
       [id]
@@ -265,7 +269,6 @@ exports.deleteProject = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // 🔥 If approved → subtract points
     if (project.status === "Approved") {
       await db.query(
         "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
@@ -273,13 +276,22 @@ exports.deleteProject = async (req, res) => {
       );
     }
 
-    // 🔥 Delete project
     await db.query("DELETE FROM projects WHERE id=$1", [id]);
 
     res.json({ message: "Project deleted successfully" });
 
   } catch (err) {
-    console.error("Delete Project Error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+/* ✅ EXPORT */
+module.exports = {
+  addProject,
+  getStudentProjects,
+  getAllProjects,
+  updateProjectStatus,
+  updateProject,
+  deleteProject
 };

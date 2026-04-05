@@ -26,32 +26,45 @@ export default function FacultyDashboard() {
   });
 
   const [profile, setProfile] = useState({
-    fullName: "",
-    collegeId: "",
+    full_name: "",
+    institute_name: "",
     designation: "",
     qualification: "",
     expertise: "",
-    courseCode: ""
+    branch: "",
+    year: "",
+    division: ""
   });
 
+  /* ================= LOAD ================= */
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setFaculty(storedUser);
 
-    if (storedUser) {
-      setProfile({
-        fullName: storedUser.full_name || "",
-        collegeId: "",
-        designation: "",
-        qualification: "",
-        expertise: "",
-        courseCode: ""
-      });
-    }
-
     fetchDashboardStats();
+    fetchProfile(); // ✅ IMPORTANT
   }, []);
 
+  /* ================= FETCH PROFILE ================= */
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/faculty/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      setProfile(res.data);
+
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+    }
+  };
+
+  /* ================= FETCH STATS ================= */
   const fetchDashboardStats = async () => {
     try {
       const res = await axios.get(
@@ -62,12 +75,15 @@ export default function FacultyDashboard() {
           }
         }
       );
+
       setStats(res.data);
+
     } catch (err) {
-      console.error("Dashboard stats error:", err);
+      console.error(err);
     }
   };
 
+  /* ================= INPUT ================= */
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -75,177 +91,120 @@ export default function FacultyDashboard() {
     });
   };
 
+  /* ================= SAVE ================= */
+  const handleSaveProfile = async () => {
+    try {
+
+      await axios.put(
+        "http://localhost:5000/api/faculty/profile",
+        profile,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      alert("Profile updated successfully ✅");
+
+      fetchProfile(); // refresh
+
+    } catch (err) {
+      console.error(err);
+      alert("Update failed ❌");
+    }
+  };
+
+  /* ================= LOGOUT ================= */
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
   return (
     <div className="faculty-dashboard">
 
-      {/* ===== Sidebar ===== */}
+      {/* ===== SIDEBAR ===== */}
       <div className="fixed-sidebar">
         <h2 className="sidebar-title">Faculty Dashboard</h2>
 
-        <button onClick={() => setSidebarPage("home")}>
-          Home
-        </button>
-
-        <button onClick={() => setSidebarPage("profile")}>
-          Profile
-        </button>
-
-        <button onClick={() => navigate("/view-students")}>
-          View Students
-        </button>
-        <button onClick={() => navigate("/view-students")}>
-          Logout
-        </button>
+        <button onClick={() => setSidebarPage("home")}>Home</button>
+        <button onClick={() => setSidebarPage("profile")}>Profile</button>
+        <button onClick={() => navigate("/view-students")}>View Students</button>
+        <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* ===== Content ===== */}
+      {/* ===== CONTENT ===== */}
       <div className="dashboard-content">
 
-        {/* Welcome */}
         <header className="faculty-welcome">
           <h1>Welcome, {faculty?.full_name || "Faculty"} 👨‍🏫</h1>
           <p>Review student submissions</p>
         </header>
 
-        {/* ===== PROFILE PAGE ===== */}
+        {/* ================= PROFILE ================= */}
         {sidebarPage === "profile" && (
           <div className="profile-form-card">
-            <div className="profile-header">
-  <h2>Faculty Profile</h2>
 
-  <div className="profile-actions">
-    <button className="edit-btn">Edit</button>
-    <button className="delete-btn">Delete</button>
-  </div>
-</div>
+            <h2>Faculty Profile</h2>
 
             <div className="profile-grid">
 
-              <input
-                name="fullName"
-                value={profile.fullName}
-                onChange={handleChange}
-                placeholder="Full Name"
-              />
+              <input name="full_name" value={profile.full_name || ""} onChange={handleChange} placeholder="Full Name" />
+              <input name="institute_name" value={profile.institute_name || ""} onChange={handleChange} placeholder="Institute Name" />
+              <input name="designation" value={profile.designation || ""} onChange={handleChange} placeholder="Designation" />
+              <input name="qualification" value={profile.qualification || ""} onChange={handleChange} placeholder="Qualification" />
+              <input name="expertise" value={profile.expertise || ""} onChange={handleChange} placeholder="Expertise" />
 
-              <input
-                name="collegeId"
-                value={profile.collegeId}
-                onChange={handleChange}
-                placeholder="College ID Number"
-              />
+              <select name="branch" value={profile.branch || ""} onChange={handleChange}>
+                <option value="">Select Branch</option>
+                <option>Computer Engineering</option>
+                <option>Information Technology</option>
+                <option>Software Engineering</option>
+              </select>
 
-              <input
-                name="designation"
-                value={profile.designation}
-                onChange={handleChange}
-                placeholder="Designation"
-              />
+              <select name="year" value={profile.year || ""} onChange={handleChange}>
+                <option value="">Select Year</option>
+                <option>First Year</option>
+                <option>Second Year</option>
+                <option>Third Year</option>
+                <option>Fourth Year</option>
+              </select>
 
-              <input
-                name="qualification"
-                value={profile.qualification}
-                onChange={handleChange}
-                placeholder="Qualification"
-              />
+              <select name="division" value={profile.division || ""} onChange={handleChange}>
+                <option value="">Select Division</option>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+              </select>
 
-              <input
-                name="expertise"
-                value={profile.expertise}
-                onChange={handleChange}
-                placeholder="Area of Teaching Expertise"
-              />
+              <button className="faculty-btn faculty-purple" onClick={handleSaveProfile}>
+                Save Profile
+              </button>
 
-              <input
-                name="courseCode"
-                value={profile.courseCode}
-                onChange={handleChange}
-                placeholder="Course Code"
-              />
-
-              <div className="file-upload">
-                <label>Upload College ID Card Photo</label>
-                <input type="file" />
-              </div>
-
-
-
-<div className="profile-submit">
-  <button className="faculty-btn faculty-purple">
-    Submit Profile
-  </button>
-</div>
             </div>
           </div>
         )}
 
-        {/* ===== HOME DASHBOARD ===== */}
+        {/* ================= HOME ================= */}
         {sidebarPage === "home" && (
           <>
-            {/* Stats */}
             <div className="faculty-stats">
-
-              <div className="stat-card">
-                <h3>Pending Certificates</h3>
-                <p>{stats.pendingCertificates}</p>
-              </div>
-
-              <div className="stat-card">
-                <h3>Pending Activities</h3>
-                <p>{stats.pendingActivities}</p>
-              </div>
-
-              <div className="stat-card">
-                <h3>Pending Projects</h3>
-                <p>{stats.pendingProjects}</p>
-              </div>
-
-              <div className="stat-card">
-                <h3>Pending Publications</h3>
-                <p>{stats.pendingPublications}</p>
-              </div>
-
-              <div className="stat-card">
-                <h3>Total Students</h3>
-                <p>{stats.totalStudents}</p>
-              </div>
-
+              <div className="stat-card"><h3>Pending Certificates</h3><p>{stats.pendingCertificates}</p></div>
+              <div className="stat-card"><h3>Pending Activities</h3><p>{stats.pendingActivities}</p></div>
+              <div className="stat-card"><h3>Pending Projects</h3><p>{stats.pendingProjects}</p></div>
+              <div className="stat-card"><h3>Pending Publications</h3><p>{stats.pendingPublications}</p></div>
+              <div className="stat-card"><h3>Total Students</h3><p>{stats.totalStudents}</p></div>
             </div>
 
-            {/* Tabs */}
             <div className="faculty-tabs">
-
-              <button
-                className={`faculty-tab ${activeTab === "certificates" ? "faculty-active" : ""}`}
-                onClick={() => setActiveTab("certificates")}
-              >
-                Certificates
-              </button>
-
-              <button
-                className={`faculty-tab ${activeTab === "activities" ? "faculty-active" : ""}`}
-                onClick={() => setActiveTab("activities")}
-              >
-                Activities
-              </button>
-
-              <button
-                className={`faculty-tab ${activeTab === "projects" ? "faculty-active" : ""}`}
-                onClick={() => setActiveTab("projects")}
-              >
-                Projects
-              </button>
-
-              <button
-                className={`faculty-tab ${activeTab === "publications" ? "faculty-active" : ""}`}
-                onClick={() => setActiveTab("publications")}
-              >
-                Publications
-              </button>
-
+              <button onClick={() => setActiveTab("certificates")}>Certificates</button>
+              <button onClick={() => setActiveTab("activities")}>Activities</button>
+              <button onClick={() => setActiveTab("projects")}>Projects</button>
+              <button onClick={() => setActiveTab("publications")}>Publications</button>
             </div>
 
-            {/* Tab Content */}
             {activeTab === "certificates" && <FacultyCertificates />}
             {activeTab === "activities" && <FacultyActivities />}
             {activeTab === "projects" && <FacultyProjects />}

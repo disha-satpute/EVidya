@@ -65,82 +65,123 @@ const getStudentActivities = async (req, res) => {
 
 
 const getAllActivities = async (req, res) => {
-
   try {
 
-    const result = await db.query(
+    const facultyId = req.user.id;
 
+    // 🔥 Get faculty profile
+    const facultyRes = await db.query(
+      "SELECT branch, year, division FROM faculty WHERE id=$1",
+      [facultyId]
+    );
+
+    const faculty = facultyRes.rows[0];
+
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    const { branch, year, division } = faculty;
+
+    // 🔥 Get assigned students
+    const studentsRes = await db.query(
+      `SELECT id FROM students
+       WHERE branch=$1 AND year=$2 AND division=$3`,
+      [branch, year, division]
+    );
+
+    const studentIds = studentsRes.rows.map(s => s.id);
+
+    if (studentIds.length === 0) {
+      return res.json([]);
+    }
+
+    // 🔥 Get only THEIR activities
+    const result = await db.query(
       `SELECT activities.*, students.full_name
        FROM activities
        JOIN students ON students.id = activities.student_id
-       ORDER BY created_at DESC`
-
+       WHERE activities.student_id = ANY($1)
+       ORDER BY activities.created_at DESC`,
+      [studentIds]
     );
 
     res.json(result.rows);
 
   } catch (err) {
-
     console.error(err);
     res.status(500).json({ message: "Server error" });
-
   }
-
 };
 
 
-const approveActivity = async (req, res) => {
 
+const approveActivity = async (req, res) => {
   try {
 
     const { id } = req.params;
+    const facultyId = req.user.id;
 
-    const activityData = await db.query(
-      "SELECT * FROM activities WHERE id=$1",
+    // 🔥 Get faculty
+    const facultyRes = await db.query(
+      "SELECT branch, year, division FROM faculty WHERE id=$1",
+      [facultyId]
+    );
+
+    const faculty = facultyRes.rows[0];
+
+    // 🔥 Get activity + student info
+    const activityRes = await db.query(
+      `SELECT activities.*, students.branch, students.year, students.division, students.id as student_id
+       FROM activities
+       JOIN students ON students.id = activities.student_id
+       WHERE activities.id=$1`,
       [id]
     );
 
-    const activity = activityData.rows[0];
+    const activity = activityRes.rows[0];
 
     if (!activity) {
       return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // 🔒 ACCESS CHECK
+    if (
+      activity.branch !== faculty.branch ||
+      activity.year !== faculty.year ||
+      activity.division !== faculty.division
+    ) {
+      return res.status(403).json({ message: "Unauthorized" });
     }
 
     if (activity.status === "Approved") {
       return res.json({ message: "Already approved" });
     }
 
+    // 🔥 POINT LOGIC
     let points = 0;
 
     switch (activity.activity_type) {
-
       case "Hackathon":
         points = 100;
         break;
-
       case "Competition":
         points = 80;
         break;
-
       case "Internship":
         points = 120;
         break;
-
       case "Workshop":
         points = 40;
         break;
-
       case "Seminar":
         points = 30;
         break;
-
       case "Volunteering":
         points = 25;
         break;
-
       default:
         points = 20;
-
     }
 
     await db.query(
@@ -156,20 +197,50 @@ const approveActivity = async (req, res) => {
     res.json({ message: "Activity approved", points });
 
   } catch (err) {
-
     console.error(err);
     res.status(500).json({ message: "Server error" });
-
   }
-
 };
 
 
-const rejectActivity = async (req, res) => {
 
+const rejectActivity = async (req, res) => {
   try {
 
     const { id } = req.params;
+    const facultyId = req.user.id;
+
+    // 🔥 Get faculty
+    const facultyRes = await db.query(
+      "SELECT branch, year, division FROM faculty WHERE id=$1",
+      [facultyId]
+    );
+
+    const faculty = facultyRes.rows[0];
+
+    // 🔥 Get activity + student
+    const activityRes = await db.query(
+      `SELECT activities.*, students.branch, students.year, students.division
+       FROM activities
+       JOIN students ON students.id = activities.student_id
+       WHERE activities.id=$1`,
+      [id]
+    );
+
+    const activity = activityRes.rows[0];
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // 🔒 ACCESS CHECK
+    if (
+      activity.branch !== faculty.branch ||
+      activity.year !== faculty.year ||
+      activity.division !== faculty.division
+    ) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
 
     await db.query(
       "UPDATE activities SET status='Rejected' WHERE id=$1",
@@ -179,12 +250,12 @@ const rejectActivity = async (req, res) => {
     res.json({ message: "Activity rejected" });
 
   } catch (err) {
-
+    console.error(err);
     res.status(500).json({ message: "Server error" });
-
   }
-
 };
+
+
 const updateActivity = async (req, res) => {
   try {
     const { id } = req.params;

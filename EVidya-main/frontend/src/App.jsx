@@ -12,6 +12,7 @@ import VideoPage from "./Pages/video";
 import FAQPage from "./Pages/FAQ";
 import AboutPage from "./Pages/About";
 import LeaderboardPage from "./Pages/LeaderboardPage";
+import ViewStudents from "./Pages/VIewStudents";
 function App() {
   return (
     <Router>
@@ -28,6 +29,7 @@ function App() {
         <Route path="/FAQ" element={<FAQPage />} />
         <Route path="/About" element={<AboutPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/view-students" element={<ViewStudents />} />
       </Routes>
       
     </Router>

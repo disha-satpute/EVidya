@@ -2,43 +2,47 @@ const express = require("express");
 const router = express.Router();
 
 const {
-addProject,
-getStudentProjects,
-getAllProjects,
-updateProjectStatus,
-updateProject,
-deleteProject
+  addProject,
+  getStudentProjects,
+  getAllProjects,
+  updateProjectStatus,
+  updateProject,
+  deleteProject
 } = require("../controllers/projectController");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
-
+// ADD PROJECT
 router.post(
-"/add",
-authMiddleware,
-upload.single("screenshot"),
-addProject
+  "/add",
+  authMiddleware,
+  upload.single("screenshot"),
+  addProject
 );
 
+// GET STUDENT PROJECTS
 router.get(
-"/student",
-authMiddleware,
-getStudentProjects
+  "/student",
+  authMiddleware,
+  getStudentProjects
 );
 
+// GET ALL PROJECTS
 router.get(
-"/all",
-authMiddleware,
-getAllProjects
+  "/all",
+  authMiddleware,
+  getAllProjects
 );
 
+// UPDATE STATUS
 router.put(
-    "/status/:id", 
-    authMiddleware, 
-    updateProjectStatus
+  "/status/:id",
+  authMiddleware,
+  updateProjectStatus
 );
-/* UPDATE PROJECT */
+
+// UPDATE PROJECT
 router.put(
   "/update/:id",
   authMiddleware,
@@ -46,7 +50,7 @@ router.put(
   updateProject
 );
 
-/* DELETE PROJECT */
+// DELETE PROJECT
 router.delete(
   "/:id",
   authMiddleware,

@@ -177,3 +177,22 @@ CREATE TABLE publications (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
+
+ALTER TABLE students
+ADD COLUMN institute_name TEXT,
+ADD COLUMN division TEXT,
+ADD COLUMN id_card TEXT;
+
+
+ALTER TABLE students ADD COLUMN division VARCHAR(20);
+ALTER TABLE faculty 
+ADD COLUMN branch VARCHAR(100),
+ADD COLUMN year VARCHAR(20),
+ADD COLUMN division VARCHAR(20);
+
+ALTER TABLE students ADD COLUMN faculty_id UUID REFERENCES faculty(id);
+
+	ALTER TABLE faculty
+ADD COLUMN designation TEXT,
+ADD COLUMN qualification TEXT,
+ADD COLUMN expertise TEXT;
