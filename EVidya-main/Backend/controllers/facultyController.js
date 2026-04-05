@@ -187,6 +187,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+
 exports.updateProfile = async (req, res) => {
   try {
     const facultyId = req.user.id;
@@ -202,7 +203,7 @@ exports.updateProfile = async (req, res) => {
       division
     } = req.body;
 
-    const result = await pool.query(
+    await pool.query(
       `UPDATE faculty SET
         full_name=$1,
         college=$2,
@@ -212,11 +213,10 @@ exports.updateProfile = async (req, res) => {
         branch=$6,
         year=$7,
         division=$8
-      WHERE id=$9
-      RETURNING *`,
+      WHERE id=$9`,
       [
         full_name,
-        institute_name,   // mapped to college
+        institute_name,   // maps to college
         designation,
         qualification,
         expertise,
@@ -227,13 +227,14 @@ exports.updateProfile = async (req, res) => {
       ]
     );
 
-    res.json(result.rows[0]);
+    res.json({ message: "Profile updated" });
 
   } catch (err) {
-    console.error("Update Profile Error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 exports.getMyStudents = async (req, res) => {
