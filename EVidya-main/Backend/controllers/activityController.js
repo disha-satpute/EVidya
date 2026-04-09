@@ -1,5 +1,8 @@
 const db = require("../config/db");
 
+
+/* ================= ADD ACTIVITY ================= */
+
 const addActivity = async (req, res) => {
 
   try {
@@ -39,6 +42,8 @@ const addActivity = async (req, res) => {
 };
 
 
+/* ================= GET STUDENT ACTIVITIES ================= */
+
 const getStudentActivities = async (req, res) => {
 
   try {
@@ -63,6 +68,8 @@ const getStudentActivities = async (req, res) => {
 
 };
 
+
+/* ================= GET ALL ACTIVITY ================= */
 
 const getAllActivities = async (req, res) => {
   try {
@@ -115,6 +122,7 @@ const getAllActivities = async (req, res) => {
 };
 
 
+/* ================= APPROVE ACTIVITY ================= */
 
 const approveActivity = async (req, res) => {
   try {
@@ -203,6 +211,7 @@ const approveActivity = async (req, res) => {
 };
 
 
+/* ================= REJECT ACTIVITY ================= */
 
 const rejectActivity = async (req, res) => {
   try {
@@ -256,6 +265,8 @@ const rejectActivity = async (req, res) => {
 };
 
 
+/* ================= UPDATE ACTIVITY ================= */
+
 const updateActivity = async (req, res) => {
   try {
     const { id } = req.params;
@@ -270,7 +281,7 @@ const updateActivity = async (req, res) => {
 
     const filePath = req.file ? req.file.path : null;
 
-    // 🔥 Step 1: Get old activity
+    // Step 1: Get old activity
     const old = await db.query(
       "SELECT * FROM activities WHERE id=$1",
       [id]
@@ -282,7 +293,7 @@ const updateActivity = async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    // 🔥 Step 2: If already approved → subtract points
+    // Step 2: If already approved → subtract points
     if (activity.status === "Approved" && activity.points > 0) {
       await db.query(
         "UPDATE students SET total_points = total_points - $1 WHERE id=$2",
@@ -290,7 +301,7 @@ const updateActivity = async (req, res) => {
       );
     }
 
-    // 🔥 Step 3: Update activity & reset status
+    // Step 3: Update activity & reset status
     const result = await db.query(
       `UPDATE activities
        SET
@@ -322,8 +333,6 @@ const updateActivity = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 
 /* ================= DELETE ACTIVITY ================= */
@@ -365,8 +374,6 @@ const deleteActivity = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 
 module.exports = {
