@@ -2,6 +2,7 @@ const pool = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+
 exports.registerFaculty = async (req, res) => {
   try {
     const { fullName, college, email, password, confirmPassword } = req.body;
@@ -47,7 +48,6 @@ exports.registerFaculty = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.loginFaculty = async (req, res) => {
   try {
@@ -168,9 +168,6 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 
-
-
-
 exports.getProfile = async (req, res) => {
   try {
     const facultyId = req.user.id;
@@ -186,7 +183,6 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.updateProfile = async (req, res) => {
   try {
@@ -234,8 +230,6 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 exports.getMyStudents = async (req, res) => {
   try {

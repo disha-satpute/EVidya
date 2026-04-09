@@ -70,7 +70,7 @@ exports.getAllPublications = async (req, res) => {
 
     const facultyId = req.user.id;
 
-    // 🔥 get faculty details
+    //  get faculty details
     const facultyRes = await db.query(
       "SELECT branch, year, division FROM faculty WHERE id=$1",
       [facultyId]
@@ -82,7 +82,7 @@ exports.getAllPublications = async (req, res) => {
       return res.status(404).json({ message: "Faculty not found" });
     }
 
-    // 🔥 get assigned students
+    //  get assigned students
     const studentsRes = await db.query(
       `SELECT id FROM students
        WHERE branch=$1 AND year=$2 AND division=$3`,
@@ -95,7 +95,7 @@ exports.getAllPublications = async (req, res) => {
       return res.json([]);
     }
 
-    // 🔥 get publications of those students only
+    //  get publications of those students only
     const result = await db.query(
       `SELECT publications.*, students.full_name
        FROM publications

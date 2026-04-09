@@ -69,14 +69,13 @@ const getStudentProjects = async (req, res) => {
   }
 };
 
-/* ================= GET ALL PROJECTS ================= */
 /* ================= GET PROJECTS (FACULTY FILTERED) ================= */
 const getAllProjects = async (req, res) => {
   try {
 
     const facultyId = req.user.id;
 
-    // 🔥 1. Get faculty details
+    // Get faculty details
     const facultyRes = await db.query(
       "SELECT branch, year, division FROM faculty WHERE id=$1",
       [facultyId]
@@ -88,7 +87,7 @@ const getAllProjects = async (req, res) => {
       return res.status(404).json({ message: "Faculty not found" });
     }
 
-    // 🔥 2. Get students under that faculty
+    //  Get students under that faculty
     const studentsRes = await db.query(
       `SELECT id FROM students
        WHERE branch=$1 AND year=$2 AND division=$3`,
@@ -101,7 +100,7 @@ const getAllProjects = async (req, res) => {
       return res.json([]);
     }
 
-    // 🔥 3. Get only THEIR projects
+    //  Get only THEIR projects
     const result = await db.query(
       `SELECT projects.*, students.full_name
        FROM projects
@@ -286,7 +285,7 @@ const deleteProject = async (req, res) => {
   }
 };
 
-/* ✅ EXPORT */
+/* EXPORT */
 module.exports = {
   addProject,
   getStudentProjects,
