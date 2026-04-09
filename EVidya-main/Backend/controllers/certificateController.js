@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-/* ================= ADD CERTIFICATE ================= */
+/* ================= GET STUDENT CERTIFICATE ================= */
 const addCertificate = async (req, res) => {
   try {
     const {
@@ -50,7 +50,7 @@ const getStudentCertificates = async (req, res) => {
 };
 
 
-/* ================= GET ALL CERTIFICATES (FACULTY FILTERED) ================= */
+/* ================= GET ALL CERTIFICATES ================= */
 const getAllCertificates = async (req, res) => {
   try {
     const facultyId = req.user.id;
@@ -132,6 +132,8 @@ const rejectCertificate = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/* ================= UPDATE CERTIFICATE ================= */
 const updateCertificate = async (req, res) => {
   try {
     const { id } = req.params;
@@ -176,6 +178,7 @@ const updateCertificate = async (req, res) => {
   }
 };
 
+/* ================= DELETE CERTIFICATE ================= */
 const deleteCertificate = async (req, res) => {
   try {
     const { id } = req.params;
