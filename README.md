@@ -175,14 +175,3 @@ psql -U postgres -f evidya_schema.sql
 
 ---
 
-## 👩‍💻 Author
-
-**Disha**
-B.Tech Computer Engineering Student
-Full Stack Developer | AI/ML Enthusiast
-
----
-
-## 📜 License
-
-This project is developed for **academic and learning purposes**.
