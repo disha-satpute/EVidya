@@ -2,6 +2,7 @@ const pool = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+/* ================= REGISTER STUDENT ================= */
 exports.registerStudent = async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword } = req.body;
@@ -48,7 +49,7 @@ if (existingUser.rows.length > 0) {
   }
 };
 
-
+/* ================= LOGIN STUDENT ================= */
 exports.loginStudent = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -89,6 +90,8 @@ exports.loginStudent = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/* ================= GET STUDENT ================= */
 exports.getStudentProfile = async (req, res) => {
   try {
 
@@ -121,7 +124,7 @@ exports.getStudentProfile = async (req, res) => {
   }
 };
 
-
+/* ================= UPDATE STUDENT ================= */
 exports.updateStudentProfile = async (req, res) => {
   try {
 
