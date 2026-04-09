@@ -1,9 +1,11 @@
--- Database: evidya
+-- =========================================
+-- DATABASE: EVIDYA
+-- =========================================
 
 -- DROP DATABASE IF EXISTS evidya;
 
 CREATE DATABASE evidya
-    WITH
+WITH
     OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'English_India.1252'
@@ -11,188 +13,220 @@ CREATE DATABASE evidya
     LOCALE_PROVIDER = 'libc'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
+    IS_TEMPLATE = FALSE;
 
---Enable UUID Extension
+
+-- =========================================
+-- EXTENSIONS
+-- =========================================
+
+-- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
---Create STUDENTS Table
+
+-- =========================================
+-- STUDENTS TABLE
+-- =========================================
+
 CREATE TABLE students (
+
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     full_name VARCHAR(100) NOT NULL,
-
     email VARCHAR(150) UNIQUE NOT NULL,
-
     password_hash TEXT NOT NULL,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    prn VARCHAR(50),
+    branch VARCHAR(100),
+    year VARCHAR(20),
+    division VARCHAR(20),
 
+    cgpa DECIMAL(3,2),
+
+    institute_name TEXT,
+    id_card TEXT,
+
+    github_link TEXT,
+    linkedin_link TEXT,
+
+    faculty_id UUID,
+
+    total_points INTEGER DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---alter table students to add new columns for profile information and total points
-ALTER TABLE students ADD COLUMN total_points INTEGER DEFAULT 0;
 
---Create FACULTY Table
+-- =========================================
+-- FACULTY TABLE
+-- =========================================
+
 CREATE TABLE faculty (
+
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     full_name VARCHAR(100) NOT NULL,
-
     college VARCHAR(150) NOT NULL,
 
     email VARCHAR(150) UNIQUE NOT NULL,
-
     password_hash TEXT NOT NULL,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    branch VARCHAR(100),
+    year VARCHAR(20),
+    division VARCHAR(20),
 
+    designation TEXT,
+    qualification TEXT,
+    expertise TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
---Add Indexes (Performance Boost)
+-- Add Foreign Key (after both tables exist)
 
-CREATE INDEX idx_students_email ON students(email);
-CREATE INDEX idx_faculty_email ON faculty(email);
+ALTER TABLE students
+ADD CONSTRAINT fk_students_faculty
+FOREIGN KEY (faculty_id) REFERENCES faculty(id);
 
-INSERT INTO students (full_name, email, password_hash)
-VALUES ('test', 'test@gmail.com', 'hashedpassword');
 
-INSERT INTO faculty (full_name, college, email, password_hash)
-VALUES ('test', 'MIT','test@gmail.com', 'hashedpassword');
+-- =========================================
+-- CERTIFICATES TABLE
+-- =========================================
 
---certificate table 
 CREATE TABLE certificates (
+
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     student_id UUID REFERENCES students(id) ON DELETE CASCADE,
 
     certificate_name VARCHAR(200) NOT NULL,
-
     organization VARCHAR(200) NOT NULL,
 
     issue_date DATE NOT NULL,
 
     description TEXT,
-
     file_path TEXT,
+
+    level VARCHAR(30),
+
+    points INTEGER DEFAULT 0,
 
     status VARCHAR(20) DEFAULT 'Pending',
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---activity table 
+
+-- =========================================
+-- ACTIVITIES TABLE
+-- =========================================
 
 CREATE TABLE activities (
-id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-student_id UUID REFERENCES students(id) ON DELETE CASCADE, 
-activity_title VARCHAR(200) NOT NULL,
-activity_type VARCHAR(100) NOT NULL,
-organization VARCHAR(200) NOT NULL,
-activity_date DATE NOT NULL,
-description TEXT,
-proof_file TEXT,
-status VARCHAR(20) DEFAULT 'Pending',
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+
+    activity_title VARCHAR(200) NOT NULL,
+    activity_type VARCHAR(100) NOT NULL,
+
+    organization VARCHAR(200) NOT NULL,
+    activity_date DATE NOT NULL,
+
+    description TEXT,
+
+    proof_file TEXT,
+
+    points INTEGER DEFAULT 0,
+
+    status VARCHAR(20) DEFAULT 'Pending',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---alter table certificates to add new columns for level and points
-ALTER TABLE certificates ADD COLUMN level VARCHAR(30);
-ALTER TABLE certificates ADD COLUMN points INTEGER DEFAULT 0;
 
-ALTER TABLE activities ADD COLUMN points INTEGER DEFAULT 0;
+-- =========================================
+-- PROJECTS TABLE
+-- =========================================
 
-
-ALTER TABLE students
-ADD COLUMN prn VARCHAR(50),
-ADD COLUMN branch VARCHAR(100),
-ADD COLUMN year VARCHAR(20),
-ADD COLUMN cgpa DECIMAL(3,2),
-ADD COLUMN github_link TEXT,
-ADD COLUMN linkedin_link TEXT;
-
-
---create projects table
 CREATE TABLE projects (
 
-id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES students(id) ON DELETE CASCADE,
 
-project_title VARCHAR(200) NOT NULL,
+    project_title VARCHAR(200) NOT NULL,
 
-description TEXT,
+    description TEXT,
 
-technologies TEXT,
+    technologies TEXT,
+    category VARCHAR(100),
+    project_level VARCHAR(100),
 
-category VARCHAR(100),
+    start_date DATE,
+    end_date DATE,
 
-project_level VARCHAR(100),
+    github_link TEXT,
+    demo_link TEXT,
+    video_link TEXT,
 
-start_date DATE,
+    screenshot TEXT,
 
-end_date DATE,
+    status VARCHAR(20) DEFAULT 'Pending',
 
-github_link TEXT,
-
-demo_link TEXT,
-
-video_link TEXT,
-
-screenshot TEXT,
-
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---alter table projects to add status column
-ALTER TABLE projects ADD COLUMN status VARCHAR(20) DEFAULT 'Pending';
 
+-- =========================================
+-- PUBLICATIONS TABLE
+-- =========================================
 
---create publications table
 CREATE TABLE publications (
 
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-  student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES students(id) ON DELETE CASCADE,
 
-  title TEXT NOT NULL,
-  publication_type TEXT,
+    title TEXT NOT NULL,
 
-  journal_name TEXT,
-  publisher TEXT,
+    publication_type TEXT,
 
-  publication_date DATE,
+    journal_name TEXT,
+    publisher TEXT,
 
-  doi_link TEXT,
-  paper_link TEXT,
-  certificate_link TEXT,
+    publication_date DATE,
 
-  status TEXT DEFAULT 'Pending',
-  points INT DEFAULT 0,
+    doi_link TEXT,
+    paper_link TEXT,
+    certificate_link TEXT,
 
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status TEXT DEFAULT 'Pending',
 
+    points INT DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE students
-ADD COLUMN institute_name TEXT,
-ADD COLUMN division TEXT,
-ADD COLUMN id_card TEXT;
+
+-- =========================================
+-- INDEXES (Performance Optimization)
+-- =========================================
+
+CREATE INDEX idx_students_email ON students(email);
+CREATE INDEX idx_faculty_email ON faculty(email);
 
 
-ALTER TABLE students ADD COLUMN division VARCHAR(20);
-ALTER TABLE faculty 
-ADD COLUMN branch VARCHAR(100),
-ADD COLUMN year VARCHAR(20),
-ADD COLUMN division VARCHAR(20);
+-- =========================================
+-- SAMPLE DATA
+-- =========================================
 
-ALTER TABLE students ADD COLUMN faculty_id UUID REFERENCES faculty(id);
+INSERT INTO students (full_name, email, password_hash)
+VALUES ('test', 'test@gmail.com', 'hashedpassword');
 
-	ALTER TABLE faculty
-ADD COLUMN designation TEXT,
-ADD COLUMN qualification TEXT,
-ADD COLUMN expertise TEXT;
+
+INSERT INTO faculty (full_name, college, email, password_hash)
+VALUES ('test', 'MIT', 'test@gmail.com', 'hashedpassword');
