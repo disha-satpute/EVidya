@@ -85,7 +85,7 @@ Evidya
 │   └── config
 │
 ├── database
-│   └── evidya_schema.sql
+│   └── evidya.sql
 │
 └── README.md
 ```
