@@ -128,7 +128,6 @@ export default function FacultyDashboard() {
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* ===== CONTENT ===== */}
       <div className="dashboard-content">
 
         <header className="faculty-welcome">
@@ -136,7 +135,6 @@ export default function FacultyDashboard() {
           <p>Review student submissions</p>
         </header>
 
-        {/* ================= PROFILE ================= */}
         {sidebarPage === "profile" && (
           <div className="profile-form-card">
 
