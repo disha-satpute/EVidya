@@ -85,7 +85,7 @@ Evidya
 │   └── config
 │
 ├── database
-│   └── evidya_schema.sql
+│   └── evidya.sql
 │
 └── README.md
 ```
@@ -149,7 +149,7 @@ npm run dev
 3. Run the SQL schema file
 
 ```
-psql -U postgres -f evidya_schema.sql
+psql -U postgres -f evidya.sql
 ```
 
 ---
