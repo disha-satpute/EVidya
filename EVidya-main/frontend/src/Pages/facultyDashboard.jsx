@@ -62,7 +62,6 @@ export default function FacultyDashboard() {
     }
   };
 
-  /* ================= FETCH STATS ================= */
   const fetchDashboardStats = async () => {
     try {
       const res = await axios.get(
@@ -81,7 +80,6 @@ export default function FacultyDashboard() {
     }
   };
 
-  /* ================= INPUT ================= */
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -89,7 +87,6 @@ export default function FacultyDashboard() {
     });
   };
 
-  /* ================= SAVE ================= */
   const handleSaveProfile = async () => {
     try {
 
