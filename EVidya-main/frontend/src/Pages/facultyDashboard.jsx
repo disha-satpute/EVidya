@@ -110,7 +110,6 @@ export default function FacultyDashboard() {
     }
   };
 
-  /* ================= LOGOUT ================= */
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
@@ -182,7 +181,6 @@ export default function FacultyDashboard() {
           </div>
         )}
 
-        {/* ================= HOME ================= */}
         {sidebarPage === "home" && (
           <>
             <div className="faculty-stats">
