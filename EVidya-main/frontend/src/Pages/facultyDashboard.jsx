@@ -36,16 +36,14 @@ export default function FacultyDashboard() {
     division: ""
   });
 
-  /* ================= LOAD ================= */
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setFaculty(storedUser);
 
     fetchDashboardStats();
-    fetchProfile(); // ✅ IMPORTANT
+    fetchProfile(); 
   }, []);
 
-  /* ================= FETCH PROFILE ================= */
   const fetchProfile = async () => {
     try {
       const res = await axios.get(

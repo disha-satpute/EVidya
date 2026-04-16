@@ -235,7 +235,7 @@ const [showMenu, setShowMenu] = useState(false);  // ✅ add here
               <StatCard icon="🏆" label="Certificates" value={stats.certificates} />
               <StatCard icon="📅" label="Activities" value={stats.activities} />
               <StatCard icon="📂" label="Projects" value={stats.projects} />
-              <StatCard icon="📄" label="Publications" value={stats.publications} /> {/* ✅ NEW */}
+              <StatCard icon="📄" label="Publications" value={stats.publications} />git
               <StatCard icon="🔥" label="Points" value={stats.points} />
 
             </div>
@@ -256,7 +256,7 @@ const [showMenu, setShowMenu] = useState(false);  // ✅ add here
             <ProjectsPage refreshStats={fetchStats} />
           )}
 
-          {/* ✅ RENDER PUBLICATION PAGE */}
+          {/*  RENDER PUBLICATION PAGE */}
           {activeTab === "publications" && (
             <PublicationPage refreshStats={fetchStats} />
           )}
