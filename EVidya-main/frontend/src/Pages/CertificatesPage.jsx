@@ -148,7 +148,7 @@ const handleEditSave = async (id) => {
       }
     );
 
-    // 🔥 IMPORTANT: replace updated certificate from backend
+    // IMPORTANT: replace updated certificate from backend
     setCertificates(
       certificates.map(c => c.id === id ? res.data : c)
     );
