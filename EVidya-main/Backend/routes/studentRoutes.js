@@ -16,7 +16,7 @@ router.get("/profile", authMiddleware, getStudentProfile);
 router.put(
   "/profile",
   authMiddleware,
-  upload.single("id_card"),   // 🚨 THIS LINE IS MUST
+  upload.single("id_card"),  
   updateStudentProfile
 );
 module.exports = router;

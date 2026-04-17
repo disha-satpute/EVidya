@@ -31,13 +31,13 @@ router.get(
 router.put(
   "/update/:id",
   authMiddleware,
-  upload.single("proof_file"),   // ✅ FIXED
+  upload.single("proof_file"),   
   activityController.updateActivity
 );
 
 /* DELETE */
 router.delete(
-  "/:id",   // ✅ keep simple
+  "/:id",  
   authMiddleware,
   activityController.deleteActivity
 );
