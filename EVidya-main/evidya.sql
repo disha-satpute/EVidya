@@ -227,6 +227,5 @@ CREATE INDEX idx_faculty_email ON faculty(email);
 INSERT INTO students (full_name, email, password_hash)
 VALUES ('test', 'test@gmail.com', 'hashedpassword');
 
-
 INSERT INTO faculty (full_name, college, email, password_hash)
 VALUES ('test', 'MIT', 'test@gmail.com', 'hashedpassword');
