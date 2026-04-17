@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
       cb(null, "uploads/activities");
     }
 
-    // NEW:git  ID CARD upload
+    //  ID CARD upload
     else if (req.originalUrl.includes("students")) {
       cb(null, "uploads/id_cards");
     }
