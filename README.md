@@ -112,7 +112,7 @@ Each record is linked using **UUID-based relationships**.
 ### 1️⃣ Clone the repository
 
 ```
-git clone https://github.com/yourusername/evidya.git
+git clone https://github.com/disha-satpute/evidya.git
 ```
 
 ---
