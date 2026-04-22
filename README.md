@@ -158,7 +158,7 @@ psql -U postgres -f evidya.sql
 
 1. User registers as **Student** or **Faculty**
 2. Login credentials are validated
-3. Students submit achievements
+3. Students submit activities
 4. Faculty verifies submissions
 5. Points are assigned after approval
 
